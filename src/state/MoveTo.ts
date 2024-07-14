@@ -32,6 +32,15 @@ export default class MoveTo extends Singleton {
             case Role.Claimer: {
                 let target = Game.flags[`${roomFrom}_claim`];
                 let atkClaim = Game.flags[`${roomFrom}_atkClaim`];
+                let transfer= Game.flags[`${roomFrom}_ts`];
+                if(transfer && !creep.memory.transferState){
+                    if (creep.room.name != transfer.pos.roomName) {
+                        creep.customMove(transfer.pos);
+                        return
+                    }else{
+                        creep.memory.transferState = true;
+                    }
+                }
                 if (atkClaim) {
                     if (creep.room.name != atkClaim.pos.roomName) {
                         creep.customMove(atkClaim.pos);
@@ -77,6 +86,15 @@ export default class MoveTo extends Singleton {
             }
             case Role.HelpUpgrader:
             case Role.HelpBuilder: {
+                let transfer= Game.flags[`${roomFrom}_ts`];
+                if(transfer && !creep.memory.transferState){
+                    if (creep.room.name != transfer.pos.roomName) {
+                        creep.customMove(transfer.pos);
+                        return
+                    }else{
+                        creep.memory.transferState = true;
+                    }
+                }
                 let target;
                 if (creep.memory.role == Role.HelpBuilder) target = Game.flags[`${roomFrom}_helpBuild`];
                 if (creep.memory.role == Role.HelpUpgrader) target = Game.flags[`${roomFrom}_helpUpgrade`];
