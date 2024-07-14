@@ -275,6 +275,7 @@ interface CreepMemory {
 	healer?: string,
 	isCreate?: boolean,
 	upgradePos?: RoomPosition,
+	transferState?: boolean
 }
 
 interface FlagMemory { }
