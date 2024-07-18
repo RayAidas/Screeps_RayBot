@@ -84,6 +84,16 @@ export default class Spawn extends Singleton {
         //     num: Game.creeps[creep.name].getActiveBodyparts(WORK)
         //   }])
         // }
+        // TODO 增加插旗子控制策略
+        if (creep.memory.role == Role.Upgrader && creep.room.controller.level == 6 && global.allRes["XGH2O"] >= 1000) {
+          Boost.SetBoostType(creep.name, [{
+            type: "XGH2O",
+            num: Game.creeps[creep.name].getActiveBodyparts(WORK)
+          }, {
+            type: global.allRes["KH2O"] > 1000 ? "KH2O" : "KH",
+            num: Game.creeps[creep.name].getActiveBodyparts(CARRY)
+          }])
+        }
         if (creep.memory.role == Role.Upgrader && creep.room.controller.level == 7 && global.allRes["GH"] >= 10000) {
           Boost.SetBoostType(creep.name, [{
             type: "GH",
