@@ -356,6 +356,20 @@ export default class Init extends Singleton {
       else {
         if (global.cc[this.rooms[i]]) global.cc[this.rooms[i]].attacker = 0;
       }
+      /**
+       * 清除所有的订单
+       */
+      let clearOrder = Game.flags[`clearOrder`];
+      if (clearOrder) {
+        for (let j in Game.market.orders) {
+          let order = Game.market.getOrderById(j);
+          let res = Game.market.cancelOrder(j);
+          console.log(`当前订单 ${order} 取消成功`)
+        }
+        // 移除旗子
+        console.log(`当前时间 ${Game.time} 订单清理完毕,移除旗子`);
+        clearOrder.remove();
+      }
     }
 
     let flag0 = Game.flags['lab0'];

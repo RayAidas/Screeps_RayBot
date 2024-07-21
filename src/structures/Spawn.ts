@@ -78,29 +78,51 @@ export default class Spawn extends Singleton {
             num: Game.creeps[creep.name].getActiveBodyparts(CARRY)
           }])
         }
-        // if (creep.memory.role == Role.Upgrader && creep.room.controller.level == 7 && global.allRes["XGH2O"] >= 10000) {
-        //   Boost.SetBoostType(creep.name, [{
-        //     type: "XGH2O",
-        //     num: Game.creeps[creep.name].getActiveBodyparts(WORK)
-        //   }])
-        // }
-        // TODO 增加插旗子控制策略
-        if (creep.memory.role == Role.Upgrader && creep.room.controller.level == 6 && global.allRes["XGH2O"] >= 1000) {
-          Boost.SetBoostType(creep.name, [{
-            type: "XGH2O",
-            num: Game.creeps[creep.name].getActiveBodyparts(WORK)
-          }, {
-            type: global.allRes["KH2O"] > 1000 ? "KH2O" : "KH",
-            num: Game.creeps[creep.name].getActiveBodyparts(CARRY)
-          }])
-        }
-        if (creep.memory.role == Role.Upgrader && creep.room.controller.level == 7 && global.allRes["GH"] >= 10000) {
-          Boost.SetBoostType(creep.name, [{
-            type: "GH",
-            num: Game.creeps[creep.name].getActiveBodyparts(WORK)
-          }])
+        /**
+         * 升级boost
+         * WORK:
+         *    T1: GH +50% upgradeController 效率但不增加其能量消耗
+         *    T2: GH2O +80% upgradeController 效率但不增加其能量消耗
+         *    T3: XGH2O +100% upgradeController 效率但不增加其能量消耗
+         * CARRY:
+         *    T1: KH +50 容量
+         *    T2: KH2O 	+100 容量
+         *    T3: XKH2O +150 容量
+         */
+        let upgradePlusFlag = Game.flags[`${creep.memory.roomFrom}_upgradePlus`];
+        if (upgradePlusFlag) {
+          if (creep.memory.role == Role.Upgrader && creep.room.controller.level >= 6) {
+            // 强化WORK部件
+            if (global.allRes["XGH2O"] > 1000) {
+              this._setBoostType(creep, "XGH2O", WORK);
+            } else if (global.allRes["GH2O"] > 1000 || global.allRes["GH"] > 1000) {
+              this._setBoostType(creep, global.allRes["GH2O"] > 1000 ? "GH2O" : "GH", WORK);
+            } else {
+              console.log(`XGH2O资源不足,自动购入`);
+            }
+            // 强化CARRY部件
+            if (global.allRes["XKH2O"] >= 1000) {
+              this._setBoostType(creep, "XKH2O", CARRY);
+            } else if (global.allRes["KH2O"] > 1000 || global.allRes["KH"] > 1000) {
+              this._setBoostType(creep, global.allRes["KH2O"] > 1000 ? "KH2O" : "KH", CARRY);
+            }
+          }
+          // TODO 监控资源当前房间资源的数量并购买相关资源
         }
       }
     }
+  }
+  /**
+   * 
+   * @param creep 需要强化的Creep
+   * @param compoundType 化合物类型
+   * @param boostBodyType 强化部件
+   */
+  private _setBoostType(creep: Creep, compoundType: MineralBoostConstant, boostBodyPartType: BodyPartConstant): void {
+    const boostBodyPartAmount = Game.creeps[creep.name].getActiveBodyparts(boostBodyPartType);
+    Boost.SetBoostType(creep.name, [{
+      type: compoundType,
+      num: boostBodyPartAmount
+    }]);
   }
 }

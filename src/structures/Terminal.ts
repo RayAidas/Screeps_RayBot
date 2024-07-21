@@ -103,4 +103,31 @@ export default class Terminal extends Singleton {
             }
         }
     }
+
+    // TODO 完成自动购买功能
+    /**
+     * 自动购买
+     *     获取玩家所有的订单，删除非活跃订单并将活跃订单维护在内存中。对于活跃的订单根据市场调整购买价格，
+     *  对于没有购买能量订单且有terminal的房间，如果房间的能量低于某个阈值则创建订单并维护到内存中。
+     *     合理的价格和订单容量，避免出现抬价的情况。 
+     */
+    private _autoBuyEnergy(): void {
+        // 获取在市场中活跃 (activated) 和非活跃 (deactivated) 的购买能量的订单存到Memory中
+        // 获取购买能量的房间并清除非活跃订单
+        for (let i in Game.market.orders) {
+            let order = Game.market.getOrderById(i);
+            if (order.active) {
+
+            } else {
+                Game.market.cancelOrder(order.id);
+            }
+            
+        }
+        // 根据平均价格和最大购买订单价格计算出一个参考价格
+
+        // 对于有terminal的房间如果存储量小于250000,则根据存储量调整购买价格并记录在Memory中
+
+        // 对于没有购买能量的订单如果存储量小于250000,则创建一个订单
+
+    }
 }

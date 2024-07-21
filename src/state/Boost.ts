@@ -36,7 +36,7 @@ export default class Boost extends Singleton {
         let target = Game.getObjectById(room.memory.labs[0]);
         if (target) {
             if (!Memory.boostList[creep.memory.roomFrom]) Memory.boostList[creep.memory.roomFrom] = {}
-            if (creep.ticksToLive < 1400) {
+            if (creep.ticksToLive < 1450) {
                 creep.memory.state = null;
                 creep.room.memory.labs.boostType = null;
                 delete Memory.boostList[creep.memory.roomFrom][creep.name];

@@ -229,7 +229,8 @@ interface Memory {
 	generatePixel: boolean,
 	pcConfig: {
 		[roomName: string]: string
-	}
+	},
+	market: {}
 }
 
 interface Creeps {
