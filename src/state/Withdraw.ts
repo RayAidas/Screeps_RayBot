@@ -462,32 +462,17 @@ export default class Withdraw extends Singleton {
                     return;
                 }
                 let upgradePlusFlag = Game.flags[`${creep.memory.roomFrom}_upgradePlus`];
-                // 如果是冲级模式则不从Link中取能量（只有一个Link，其他的爬因取不到足够的能量而摸鱼）
-                // TODO 增加优先从controller附近的container中获取能量逻辑
+                // 如果是冲级模式则不从Link中取能量（只有一个Link）
                 if (!upgradePlusFlag) {
                     if (!creep.memory.constructionId) {
+                        // 优先从controllerContainer中获取能量
+                        let controllerContainer = Game.getObjectById(creep.room.memory.controllerContainerId);
+                        if (controllerContainer && controllerContainer.store[RESOURCE_ENERGY] >= 500) {
+                            this._moveToAndRetrieveEnergy(creep, controllerContainer);
+                        }
                         let controllerLink = Game.getObjectById(creep.room.memory.controllerLinkId);
                         if (controllerLink) {
-                            let dis = App.common.getDis(creep.pos, controllerLink.pos);
-                            if (dis > 1) {
-                                if (!creep.memory.targetPos) {
-                                    let targetPos = App.common.findPos(controllerLink.pos);
-                                    if (targetPos) creep.memory.targetPos = targetPos;
-                                } else {
-                                    creep.customMove(creep.memory.targetPos, 0);
-                                    if (creep.pos.x == creep.memory.targetPos.x &&
-                                        creep.pos.y == creep.memory.targetPos.y) creep.memory.targetPos = null;
-                                    return;
-                                }
-                            } else if (dis == 1) {
-                                if (creep.memory.targetPos) {
-                                    if (creep.pos.x == creep.memory.targetPos.x &&
-                                        creep.pos.y == creep.memory.targetPos.y) creep.memory.targetPos = null;
-                                    else creep.customMove(creep.memory.targetPos, 0)
-                                }
-                            }
-                            App.common.getResourceFromTargetStructure(creep, controllerLink);
-                            return;
+                            this._moveToAndRetrieveEnergy(creep, controllerLink);
                         }
                     }
                 }
@@ -586,5 +571,34 @@ export default class Withdraw extends Singleton {
                 break;
             }
         }
+    }
+
+    /**
+     * 移动到目标位置并获取能量
+     * @param creep 
+     * @param target 
+     * @returns 
+     */
+    private _moveToAndRetrieveEnergy(creep: Creep, target: AnyStructure | Ruin | Tombstone) {
+        let dis = App.common.getDis(creep.pos, target.pos);
+        if (dis > 1) {
+            if (!creep.memory.targetPos) {
+                let targetPos = App.common.findPos(target.pos);
+                if (targetPos) creep.memory.targetPos = targetPos;
+            } else {
+                creep.customMove(creep.memory.targetPos, 0);
+                if (creep.pos.x == creep.memory.targetPos.x &&
+                    creep.pos.y == creep.memory.targetPos.y) creep.memory.targetPos = null;
+                return;
+            }
+        } else if (dis == 1) {
+            if (creep.memory.targetPos) {
+                if (creep.pos.x == creep.memory.targetPos.x &&
+                    creep.pos.y == creep.memory.targetPos.y) creep.memory.targetPos = null;
+                else creep.customMove(creep.memory.targetPos, 0)
+            }
+        }
+        App.common.getResourceFromTargetStructure(creep, target);
+        return;
     }
 }
