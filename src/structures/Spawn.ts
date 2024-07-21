@@ -90,7 +90,8 @@ export default class Spawn extends Singleton {
          *    T3: XKH2O +150 容量
          */
         let upgradePlusFlag = Game.flags[`${creep.memory.roomFrom}_upgradePlus`];
-        if (upgradePlusFlag) {
+        let upgraderBoostFlag = Game.flags[`${creep.memory.roomFrom}_upgraderBoost`];
+        if (upgradePlusFlag || upgraderBoostFlag) {
           if (creep.memory.role == Role.Upgrader && creep.room.controller.level >= 6) {
             // 强化WORK部件
             if (global.allRes["XGH2O"] > 1000) {
