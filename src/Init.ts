@@ -198,7 +198,7 @@ export default class Init extends Singleton {
         let terminal = room.terminal;
         let energyAcount = (storage ? storage.store.energy : 0) + (terminal ? terminal.store.energy : 0);
         if (energyAcount > 200000) {
-          if (energyAcount > 200000 && room.controller.level < 8) {
+          if (energyAcount > 500000 && room.controller.level < 8) {
             global.cc[roomName].builder = RoleNum[room.controller.level][Role.Builder];
             global.cc[roomName].upgrader = 8;
             global.cc[roomName].filler = 2;
