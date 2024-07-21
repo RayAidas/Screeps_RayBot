@@ -469,10 +469,12 @@ export default class Withdraw extends Singleton {
                         let controllerContainer = Game.getObjectById(creep.room.memory.controllerContainerId);
                         if (controllerContainer && controllerContainer.store[RESOURCE_ENERGY] >= 500) {
                             this._moveToAndRetrieveEnergy(creep, controllerContainer);
+                            return;
                         }
                         let controllerLink = Game.getObjectById(creep.room.memory.controllerLinkId);
                         if (controllerLink) {
                             this._moveToAndRetrieveEnergy(creep, controllerLink);
+                            return;
                         }
                     }
                 }
