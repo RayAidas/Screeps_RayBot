@@ -102,10 +102,12 @@ export default class Spawn extends Singleton {
               console.log(`XGH2O资源不足,自动购入`);
             }
             // 强化CARRY部件
-            if (global.allRes["XKH2O"] >= 1000) {
-              this._setBoostType(creep, "XKH2O", CARRY);
-            } else if (global.allRes["KH2O"] > 1000 || global.allRes["KH"] > 1000) {
-              this._setBoostType(creep, global.allRes["KH2O"] > 1000 ? "KH2O" : "KH", CARRY);
+            if (upgradePlusFlag) {
+              if (global.allRes["XKH2O"] > 1000) {
+                this._setBoostType(creep, "XKH2O", CARRY);
+              } else if (global.allRes["KH2O"] > 1000 || global.allRes["KH"] > 1000) {
+                this._setBoostType(creep, global.allRes["KH2O"] > 1000 ? "KH2O" : "KH", CARRY);
+              }
             }
           }
           // TODO 监控资源当前房间资源的数量并购买相关资源

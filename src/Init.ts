@@ -212,7 +212,7 @@ export default class Init extends Singleton {
         else {
           global.cc[roomName].builder = 0;
           global.cc[roomName].upgrader = 0;
-          if (room.controller.ticksToDowngrade < 100000 || room.controller.level < 8) global.cc[roomName].upgrader = 1;
+          if (room.controller.ticksToDowngrade < 100000 || room.controller.level < 8) global.cc[roomName].upgrader = 3;
         }
       } else {
         if (global.cc[roomName]) {
