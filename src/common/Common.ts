@@ -110,6 +110,17 @@ export default class Common extends Singleton {
         }
     }
 
+    public getcontrollerContainerId(roomName: string): void {
+        let room = Game.rooms[roomName];
+        let controllerContainer: StructureContainer[] = undefined;
+        controllerContainer = room.controller.pos.findInRange(FIND_STRUCTURES, 5, {
+            filter: (stru) => {
+                return stru.structureType == 'container'
+            }
+        }) as StructureContainer[];
+        if (controllerContainer.length > 0) room.memory.controllerContainerId = controllerContainer[0].id;
+    }
+
     public isPosEqual(pos1: RoomPosition, pos2: RoomPosition) {
         if (pos1.x == pos2.x && pos1.y == pos2.y && pos1.roomName == pos2.roomName) return true;
         else return false;

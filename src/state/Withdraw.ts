@@ -463,6 +463,7 @@ export default class Withdraw extends Singleton {
                 }
                 let upgradePlusFlag = Game.flags[`${creep.memory.roomFrom}_upgradePlus`];
                 // 如果是冲级模式则不从Link中取能量（只有一个Link，其他的爬因取不到足够的能量而摸鱼）
+                // TODO 增加优先从controller附近的container中获取能量逻辑
                 if (!upgradePlusFlag) {
                     if (!creep.memory.constructionId) {
                         let controllerLink = Game.getObjectById(creep.room.memory.controllerLinkId);
