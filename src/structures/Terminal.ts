@@ -2,6 +2,10 @@ import Singleton from '@/Singleton';
 
 export default class Terminal extends Singleton {
     run(roomName: string) {
+
+        // 自动购买能量
+        this._autoBuyEnergy(roomName);  
+
         let room = Game.rooms[roomName];
         let terminal = room.terminal;
         if (!terminal) return;
@@ -104,30 +108,80 @@ export default class Terminal extends Singleton {
         }
     }
 
-    // TODO 完成自动购买功能
     /**
      * 自动购买
      *     获取玩家所有的订单，删除非活跃订单并将活跃订单维护在内存中。对于活跃的订单根据市场调整购买价格，
      *  对于没有购买能量订单且有terminal的房间，如果房间的能量低于某个阈值则创建订单并维护到内存中。
      *     合理的价格和订单容量，避免出现抬价的情况。 
      */
-    private _autoBuyEnergy(): void {
+    private _autoBuyEnergy(roomName: string): void {
+        if (Game.rooms[roomName].controller.level < 6) return;
         // 获取在市场中活跃 (activated) 和非活跃 (deactivated) 的购买能量的订单存到Memory中
-        // 获取购买能量的房间并清除非活跃订单
-        for (let i in Game.market.orders) {
-            let order = Game.market.getOrderById(i);
-            if (order.active) {
+        const orders = Game.market.getAllOrders({ resourceType: 'energy', type: ORDER_BUY });
+        // const averagePrice = orders.reduce((acc, order) => acc + order.price, 0) / orders.length;
+        // console.log(`市场平均价格为 averagePrice: [${averagePrice}]`);
 
-            } else {
-                Game.market.cancelOrder(order.id);
+        // 获取当前市场上的最高出价
+        orders.sort((a, b) => b.price - a.price);
+        const highestPrice = orders.length > 0 ? orders[0].price : 0;
+
+        // 获取购买能量的房间并清除非活跃订单并删除非活跃订单
+        for (let order in Game.market.orders) {
+            const _order = Game.market.orders[order]
+            const orderId = _order.id;
+            const orderStatus = _order.active;
+            if (!orderStatus) {
+                // 将订单从内存中移除
+                Game.rooms[_order.roomName].memory.energyOrder = undefined;
+                Game.market.cancelOrder(orderId);
             }
-            
+            // 获取活跃的订单根据订单所属房间并将其存入到内存中
+            if (orderStatus) {
+                // 将能量订单存储到内存中
+                if (_order.resourceType == RESOURCE_ENERGY && !Game.rooms[_order.roomName].memory.energyOrder) {
+                    // 将订单id存到内存中
+                    Game.rooms[_order.roomName].memory.energyOrder = _order.id;
+                }
+            }
         }
-        // 根据平均价格和最大购买订单价格计算出一个参考价格
+        // 检查能量存储情况
+        let room = Game.rooms[roomName];
+        if (!room) return;
 
-        // 对于有terminal的房间如果存储量小于250000,则根据存储量调整购买价格并记录在Memory中
+        // 检查房间的能量存储量
+        const energyInTerminal = room.terminal ? room.terminal.store.energy : 0;
+        const energyInStorage = room.storage ? room.storage.store.energy : 0;
+        const totalEnergy = energyInTerminal + energyInStorage;
+        // console.log(`当前房间[${room}], energyInTerminal:[${energyInTerminal}], energyInStorage[${energyInStorage}], totalEnergy[${totalEnergy}]`);
 
-        // 对于没有购买能量的订单如果存储量小于250000,则创建一个订单
-
+        // 如果能量低于阈值，则创建或更新购买订单
+        const energyThreshold = 400000; // 定义的能量阈值
+        if (totalEnergy < energyThreshold && energyThreshold - totalEnergy >= 10000) {
+            const roomEnergyOrder = Game.market.getOrderById(room.memory.energyOrder);
+            if (roomEnergyOrder) {
+                // 更新价格 每200tick执行一次, 价格高于25则不进行更新
+                if (Game.time % 10 == 0 && highestPrice <= 25) {
+                    const newPrice = Math.max(roomEnergyOrder.price, highestPrice - 0.01);
+                    console.log(`order [${roomEnergyOrder.id}] newPrice[${newPrice}]`);
+                    Game.market.changeOrderPrice(roomEnergyOrder.id, newPrice);
+                    console.log(`change room [${room}] order [${roomEnergyOrder.id}] price success, new price [${newPrice}]`);
+                }
+            } else {
+                // 如果已经有一笔订单则不再创建
+                if (Game.rooms[room.name].memory.energyOrder) {
+                    console.log(`energyOrder already exists [${Game.rooms[room.name].memory.energyOrder}]`);
+                    return;
+                }
+                // 创建新订单 最多创建20K的订单,价格高于25则不进行创建
+                if (highestPrice > 25) return;
+                Game.market.createOrder({
+                    type: ORDER_BUY,
+                    resourceType: 'energy',
+                    price: highestPrice - 0.01,
+                    totalAmount: Math.min(20000, energyThreshold - totalEnergy),
+                    roomName: room.name
+                });
+            }
+        }
     }
 }
