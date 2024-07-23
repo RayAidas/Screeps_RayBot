@@ -4,7 +4,9 @@ export default class Terminal extends Singleton {
     run(roomName: string) {
 
         // 自动购买能量
-        this._autoBuyEnergy(roomName);  
+        if (Game.time % 10 == 0) {
+            this._autoBuyEnergy(roomName);
+        }
 
         let room = Game.rooms[roomName];
         let terminal = room.terminal;
@@ -127,13 +129,15 @@ export default class Terminal extends Singleton {
 
         // 获取购买能量的房间并清除非活跃订单并删除非活跃订单
         for (let order in Game.market.orders) {
-            const _order = Game.market.orders[order]
+            const _order = Game.market.orders[order];
+            if (_order.roomName !== roomName) return;
             const orderId = _order.id;
             const orderStatus = _order.active;
             if (!orderStatus) {
                 // 将订单从内存中移除
                 Game.rooms[_order.roomName].memory.energyOrder = undefined;
                 Game.market.cancelOrder(orderId);
+                return;
             }
             // 获取活跃的订单根据订单所属房间并将其存入到内存中
             if (orderStatus) {
@@ -141,6 +145,7 @@ export default class Terminal extends Singleton {
                 if (_order.resourceType == RESOURCE_ENERGY && !Game.rooms[_order.roomName].memory.energyOrder) {
                     // 将订单id存到内存中
                     Game.rooms[_order.roomName].memory.energyOrder = _order.id;
+                    return;
                 }
             }
         }
@@ -159,17 +164,16 @@ export default class Terminal extends Singleton {
         if (totalEnergy < energyThreshold && energyThreshold - totalEnergy >= 10000) {
             const roomEnergyOrder = Game.market.getOrderById(room.memory.energyOrder);
             if (roomEnergyOrder) {
-                // 更新价格 每200tick执行一次, 价格高于25则不进行更新
-                if (Game.time % 10 == 0 && highestPrice <= 25) {
+                // 更新价格 每100tick执行一次, 价格高于25则不进行更新
+                if (Game.time % 100 == 0 && highestPrice <= 25) {
                     const newPrice = Math.max(roomEnergyOrder.price, highestPrice - 0.01);
-                    console.log(`order [${roomEnergyOrder.id}] newPrice[${newPrice}]`);
                     Game.market.changeOrderPrice(roomEnergyOrder.id, newPrice);
-                    console.log(`change room [${room}] order [${roomEnergyOrder.id}] price success, new price [${newPrice}]`);
+                    console.log(`change room ${room} order [${roomEnergyOrder.id}] price success, new price [${newPrice}]`);
                 }
             } else {
                 // 如果已经有一笔订单则不再创建
-                if (Game.rooms[room.name].memory.energyOrder) {
-                    console.log(`energyOrder already exists [${Game.rooms[room.name].memory.energyOrder}]`);
+                if (Game.rooms[room.name].memory.energyOrder !== undefined) {
+                    console.log(`room ${room} energyOrder already exists [${Game.rooms[room.name].memory.energyOrder}]`);
                     return;
                 }
                 // 创建新订单 最多创建20K的订单,价格高于25则不进行创建
@@ -177,10 +181,12 @@ export default class Terminal extends Singleton {
                 Game.market.createOrder({
                     type: ORDER_BUY,
                     resourceType: 'energy',
-                    price: highestPrice - 0.01,
+                    price: highestPrice - 0.001,
                     totalAmount: Math.min(20000, energyThreshold - totalEnergy),
                     roomName: room.name
                 });
+                console.log(`create energy order success, room ${room}`);
+                return;
             }
         }
     }
