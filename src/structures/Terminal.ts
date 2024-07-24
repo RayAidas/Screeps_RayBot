@@ -175,7 +175,7 @@ export default class Terminal extends Singleton {
             } else {
                 // 如果已经有一笔订单则不再创建
                 if (Game.rooms[room.name].memory.energyOrder !== undefined) {
-                    console.log(`room`, colorful(room.name, 'blue'), `energyOrder already`, colorful(`exists`, 'red'), `[${Game.rooms[room.name].memory.energyOrder}]`);
+                    // console.log(`room`, colorful(room.name, 'blue'), `energyOrder already`, colorful(`exists`, 'red'), `[${Game.rooms[room.name].memory.energyOrder}]`);
                     return;
                 }
                 // 创建新订单 最多创建20K的订单,价格高于25则不进行创建
