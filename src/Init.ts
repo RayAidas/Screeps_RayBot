@@ -3,6 +3,7 @@ import { Role, RoleNum } from "./common/Constant";
 import { colorful, colorHex, getColor } from "./common/utils";
 import Singleton from "./Singleton";
 import { Glb } from "./indexManager";
+import { TalkAll } from "./state/creepChat.js"
 
 
 export default class Init extends Singleton {
@@ -15,6 +16,7 @@ export default class Init extends Singleton {
 
   public runInLoop() {
     try {
+      TalkAll.run();
       if (Game.shard.name == "shard3" && Game.cpu.bucket < 100) return;
       if (Game.shard.name == "shard3") {
         // 默认关闭
