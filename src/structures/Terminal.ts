@@ -1,4 +1,5 @@
 import Singleton from '@/Singleton';
+import { colorful } from '@/common/utils';
 
 export default class Terminal extends Singleton {
     run(roomName: string) {
@@ -169,12 +170,12 @@ export default class Terminal extends Singleton {
                 if (Game.time % 100 == 0 && highestPrice <= 25) {
                     const newPrice = Math.max(roomEnergyOrder.price, highestPrice - 0.01);
                     Game.market.changeOrderPrice(roomEnergyOrder.id, newPrice);
-                    console.log(`change room ${room} order [${roomEnergyOrder.id}] price success, new price [${newPrice}]`);
+                    console.log(colorful(`change`, 'yellow'), `room `, colorful(room.name, 'blue'), `order`, `[${roomEnergyOrder.id}]`, `price success, new price [${newPrice}]`);
                 }
             } else {
                 // 如果已经有一笔订单则不再创建
                 if (Game.rooms[room.name].memory.energyOrder !== undefined) {
-                    console.log(`room ${room} energyOrder already exists [${Game.rooms[room.name].memory.energyOrder}]`);
+                    console.log(`room`, colorful(room.name, 'blue'), `energyOrder already`, colorful(`exists`, 'red'), `[${Game.rooms[room.name].memory.energyOrder}]`);
                     return;
                 }
                 // 创建新订单 最多创建20K的订单,价格高于25则不进行创建
@@ -186,7 +187,8 @@ export default class Terminal extends Singleton {
                     totalAmount: Math.min(20000, energyThreshold - totalEnergy),
                     roomName: room.name
                 });
-                console.log(`create energy order success, room ${room}`);
+                console.log(colorful('create', 'green'), `energy order in room`, colorful(room.name, 'blue'), `success`);
+                
                 return;
             }
         }
