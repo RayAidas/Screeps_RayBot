@@ -117,7 +117,11 @@ export default class Terminal extends Singleton {
      *     合理的价格和订单容量，避免出现抬价的情况。 
      */
     private _autoBuyEnergy(roomName: string): void {
-        if (Game.rooms[roomName].controller.level < 6) return;
+
+        // 检查能量存储情况
+        let room = Game.rooms[roomName];
+        if (!room) return;
+        if (room.controller.level < 6 && !room.terminal) return;
         // 获取在市场中活跃 (activated) 和非活跃 (deactivated) 的购买能量的订单存到Memory中
         const orders = Game.market.getAllOrders({ resourceType: 'energy', type: ORDER_BUY });
         // const averagePrice = orders.reduce((acc, order) => acc + order.price, 0) / orders.length;
@@ -149,9 +153,6 @@ export default class Terminal extends Singleton {
                 }
             }
         }
-        // 检查能量存储情况
-        let room = Game.rooms[roomName];
-        if (!room) return;
 
         // 检查房间的能量存储量
         const energyInTerminal = room.terminal ? room.terminal.store.energy : 0;
