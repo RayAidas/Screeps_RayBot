@@ -110,7 +110,6 @@ export default class Spawn extends Singleton {
               }
             }
           }
-          // TODO 监控资源当前房间资源的数量并购买相关资源
         }
       }
     }
