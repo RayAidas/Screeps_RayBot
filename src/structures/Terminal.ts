@@ -47,6 +47,9 @@ export default class Terminal extends Singleton {
                 global.autoDeal(terminal.room.name, "LH", 300, 1000);
                 return;
             }
+            if (global.allRes.XGH2O < 20000) {
+                global.autoDeal(terminal.room.name, "XGH2O", 900, 2000)
+            }
             if (terminal.room.controller.level < 8) return;
             let type: MineralConstant = room.memory.mineral.type;
             if (global.allRes[type] < 4000 * Memory.myrooms.length) {
