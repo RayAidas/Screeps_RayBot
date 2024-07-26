@@ -166,7 +166,7 @@ export const bodyConfigs: BodyConfigs = {
     { [CARRY]: 14, [MOVE]: 7 },
     { [CARRY]: 14, [MOVE]: 7 },
     { [CARRY]: 10, [MOVE]: 5 },
-    { [CARRY]: 20, [MOVE]: 10 },
+    { [CARRY]: 2, [MOVE]: 2 },
   ),
   builder: getBodyConfig(
     { [WORK]: 1, [CARRY]: 1, [MOVE]: 1 },
