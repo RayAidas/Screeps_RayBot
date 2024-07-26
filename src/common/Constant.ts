@@ -243,7 +243,7 @@ export const bodyConfigs: BodyConfigs = {
     { [ATTACK]: 25, [MOVE]: 25 },
     { [ATTACK]: 25, [MOVE]: 25 },
     { [ATTACK]: 25, [MOVE]: 25 },
-    { [ATTACK]: 25, [MOVE]: 25 },
+    { [ATTACK]: 15, [MOVE]: 15 },
     { [ATTACK]: 25, [MOVE]: 25 },
     { [ATTACK]: 25, [MOVE]: 25 },
   ),
