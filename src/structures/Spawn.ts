@@ -78,6 +78,12 @@ export default class Spawn extends Singleton {
             num: Game.creeps[creep.name].getActiveBodyparts(CARRY)
           }])
         }
+        if (creep.memory.role == Role.Attacker) {
+          Boost.SetBoostType(creep.name, [{
+            type: global.allRes["XUH2O"] > 500 ? "XUH2O" : "UH2O",
+            num: Game.creeps[creep.name].getActiveBodyparts(ATTACK)
+          }])
+        }
         /**
          * 升级boost
          * WORK:
