@@ -73,11 +73,16 @@ export default class Init extends Singleton {
       if (Memory.boostList[roomName]) {
         let creepNames = Object.keys(Memory.boostList[roomName]);
         // console.log(`boostList当前房间 [${roomName}] 第一个creep内容为 [${creepNames[0]}]`);
+        // 需要boost的creep进行等待，最多等待100tick
+        let creepName: string;
+        for (creepName in creepNames) {
+          App.fsm.changeState(Game.creeps[creepName], State.Boost);
+        }
         if (creepNames[0]) {
           let boostCreep = Game.creeps[creepNames[0]];
-          App.fsm.changeState(boostCreep, State.Boost);
+          // App.fsm.changeState(boostCreep, State.Boost);
           App.boost.run(boostCreep);
-        } 
+        }
       }
     }
   }
