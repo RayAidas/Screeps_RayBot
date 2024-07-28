@@ -54,8 +54,8 @@ export default class Init extends Singleton {
           }
         }
       }
-      this._runCreeps();
       this._boost();
+      this._runCreeps();
       let used = Game.cpu.getUsed();
       for (let i = 0; i < this.rooms.length; i++) {
         this._showRoomInfo(this.rooms[i], used);
