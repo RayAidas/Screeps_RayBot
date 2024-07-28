@@ -170,7 +170,7 @@ export default class Terminal extends Singleton {
             const roomEnergyOrder = Game.market.getOrderById(room.memory.energyOrder);
             if (roomEnergyOrder) {
                 // 更新价格 每100tick执行一次, 价格高于25则不进行更新
-                if (Game.time % 100 == 0 && highestPrice <= 25) {
+                if (Game.time % 100 == 0 && highestPrice <= 25 && roomEnergyOrder.price !== (highestPrice - 0.01)) {
                     const newPrice = Math.max(roomEnergyOrder.price, highestPrice - 0.01);
                     Game.market.changeOrderPrice(roomEnergyOrder.id, newPrice);
                     console.log(colorful(`change`, 'yellow'), `room `, colorful(room.name, 'blue'), `order`, `[${roomEnergyOrder.id}]`, `price success, new price [${newPrice}]`);
