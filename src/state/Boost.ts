@@ -52,6 +52,7 @@ export default class Boost extends Singleton {
                 if (room.memory.labs.boostType != `${creep.name}-${types[0].type}-${30 * types[0].num}`) return;
                 if (App.common.getDis(creep.pos, target.pos) <= 1) {
                     if (target.store[types[0].type]) {
+                        console.log(JSON.stringify(Memory.boostList[creep.room.name][creep.name]));
                         let res = target.boostCreep(creep);
                         if (res == OK) {
                             creep.room.memory.labs.boostType = null;

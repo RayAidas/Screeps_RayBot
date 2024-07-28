@@ -77,7 +77,6 @@ export default class Init extends Singleton {
           let boostCreep = Game.creeps[creepNames[0]];
           App.fsm.changeState(boostCreep, State.Boost);
           App.boost.run(boostCreep);
-          console.log(JSON.stringify(Memory.boostList[boostCreep.room.name][boostCreep.name]));
         } 
       }
     }
