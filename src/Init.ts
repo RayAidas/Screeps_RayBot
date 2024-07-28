@@ -72,10 +72,9 @@ export default class Init extends Singleton {
       // 判断每个房间boost列表是否为空
       if (Memory.boostList[roomName]) {
         let creepNames = Object.keys(Memory.boostList[roomName]);
-        // console.log(`boostList当前房间 [${roomName}] 第一个creep内容为 [${creepNames[0]}]`);
         // 需要boost的creep进行等待，最多等待100tick
         let creepName: string;
-        for (creepName in creepNames) {
+        for (creepName of creepNames) {
           App.fsm.changeState(Game.creeps[creepName], State.Boost);
         }
         if (creepNames[0]) {
