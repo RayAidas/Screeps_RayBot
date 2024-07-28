@@ -62,19 +62,19 @@ export default class Spawn extends Singleton {
         let creep = Game.creeps[spawningCreep];
         if (creep.memory.role == Role.Repairer || creep.memory.role == Role.HelpBuilder) {
           Boost.SetBoostType(creep.name, [{
-            type: global.allRes["LH2O"] > 10000 ? "LH2O" : "LH",
+            type: global.allRes["LH2O"] > 1000 ? "LH2O" : "LH",
             num: Game.creeps[creep.name].getActiveBodyparts(WORK)
           }, {
-            type: global.allRes["KH2O"] > 10000 ? "KH2O" : "KH",
+            type: global.allRes["KH2O"] > 1000 ? "KH2O" : "KH",
             num: Game.creeps[creep.name].getActiveBodyparts(CARRY)
           }])
         }
         if (creep.memory.role == Role.HelpUpgrader) {
           Boost.SetBoostType(creep.name, [{
-            type: global.allRes["GH2O"] > 10000 ? "GH2O" : "GH",
+            type: global.allRes["GH2O"] > 1000 ? "GH2O" : "GH",
             num: Game.creeps[creep.name].getActiveBodyparts(WORK)
           }, {
-            type: global.allRes["KH2O"] > 10000 ? "KH2O" : "KH",
+            type: global.allRes["KH2O"] > 1000 ? "KH2O" : "KH",
             num: Game.creeps[creep.name].getActiveBodyparts(CARRY)
           }])
         }
