@@ -61,7 +61,6 @@ export default class Boost extends Singleton {
                     }
                 } else creep.customMove(target.pos, 1);
             } else {
-                creep.memory.isSetBoost = true;
                 creep.memory.state = null;
                 creep.room.memory.labs.boostType = null;
                 delete Memory.boostList[creep.memory.roomFrom][creep.name];
