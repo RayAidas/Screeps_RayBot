@@ -125,6 +125,7 @@ export default class FsmControl extends FsmSystem {
 
 
   public update(creep: Creep) {
+    if (creep.memory.state == 'Boost') return;
     if (!creep.memory.role) {
       let reg = /[0-9]+/g;
       let role = creep.name.replace(reg, '');

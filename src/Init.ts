@@ -4,6 +4,7 @@ import { colorful, colorHex, getColor } from "./common/utils";
 import Singleton from "./Singleton";
 import { Glb } from "./indexManager";
 import { TalkAll } from "./state/creepChat.js"
+import { State } from "@/fsm/state";
 
 
 export default class Init extends Singleton {
@@ -54,12 +55,31 @@ export default class Init extends Singleton {
         }
       }
       this._runCreeps();
+      this._boost();
       let used = Game.cpu.getUsed();
       for (let i = 0; i < this.rooms.length; i++) {
         this._showRoomInfo(this.rooms[i], used);
       }
     } catch (error) {
       console.log(error);
+    }
+  }
+
+  private _boost() {
+    // 遍历boostList列表，取出每个房间第一个需要boost的creep去执行boost
+    let roomName: string;
+    for (roomName in Memory.boostList) {
+      // 判断每个房间boost列表是否为空
+      if (Memory.boostList[roomName]) {
+        let creepNames = Object.keys(Memory.boostList[roomName]);
+        // console.log(`boostList当前房间 [${roomName}] 第一个creep内容为 [${creepNames[0]}]`);
+        if (creepNames[0]) {
+          let boostCreep = Game.creeps[creepNames[0]];
+          App.fsm.changeState(boostCreep, State.Boost);
+          App.boost.run(boostCreep);
+          console.log(JSON.stringify(Memory.boostList[boostCreep.room.name][boostCreep.name]));
+        } 
+      }
     }
   }
 
