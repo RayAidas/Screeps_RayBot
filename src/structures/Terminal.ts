@@ -196,4 +196,6 @@ export default class Terminal extends Singleton {
             }
         }
     }
+
+    // TODO 增加自动售卖Pixels及原料功能
 }
