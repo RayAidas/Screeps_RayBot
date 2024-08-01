@@ -220,4 +220,27 @@ export default class Transfer extends Singleton {
         }
         App.common.transferToTargetStructure(creep, target);
     }
+
+    // TODO 完成向核弹装填能量和ghodium功能
+    public ToNuker(creep: Creep) {
+        let target = Game.getObjectById(creep.room.memory.nuker);
+        if (creep.store.getUsedCapacity() == 0) {
+            App.fsm.changeState(creep, State.Withdraw);
+            return;
+        }
+        if (!creep.store.energy) {
+            App.fsm.changeState(creep, State.TransferToNuker);
+            return;
+        }
+        if (!target) {
+            App.fsm.changeState(creep, State.TransferToLab);
+            return
+        }
+        if (target.store.energy == 300000) {
+            App.fsm.changeState(creep, State.TransferToLab);
+            return;
+        }
+        App.common.transferToTargetStructure(creep, target);
+    }
+
 }

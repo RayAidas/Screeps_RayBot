@@ -337,6 +337,7 @@ interface RoomMemory {
 	ruinEnergyState?: boolean,
 	customRampartSites?: RoomPosition[],
 	energyOrder?: string,	// 能量购买订单
+	nuker: Id<StructureNuker>,
 }
 interface RoomTask {
 	[roomName: string]: {

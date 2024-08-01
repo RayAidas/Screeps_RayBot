@@ -339,6 +339,19 @@ export default class Common extends Singleton {
         room.memory.powerSpawnId = powerSpawn;
     }
 
+    public findNuker(roomName: string) {
+        let room = Game.rooms[roomName];
+        if (Game.getObjectById(room.memory.nuker)) return;
+        let nuker: Id<StructureNuker> = null;
+        room.find(FIND_STRUCTURES, {
+            filter: (structure) => {
+                if (structure.structureType == STRUCTURE_NUKER)
+                nuker = structure.id;
+            }
+        })
+        room.memory.nuker = nuker;
+    }
+
     public getSources(roomName: string) {
         let room = Game.rooms[roomName];
         if (!room.memory.sources) {
