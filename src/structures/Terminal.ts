@@ -165,7 +165,7 @@ export default class Terminal extends Singleton {
         // console.log(`当前房间[${room}], energyInTerminal:[${energyInTerminal}], energyInStorage[${energyInStorage}], totalEnergy[${totalEnergy}]`);
 
         // 如果能量低于阈值，则创建或更新购买订单
-        const energyThreshold = 400000; // 定义的能量阈值
+        const energyThreshold = 600000; // 定义的能量阈值
         if (totalEnergy < energyThreshold && energyThreshold - totalEnergy >= 10000) {
             const roomEnergyOrder = Game.market.getOrderById(room.memory.energyOrder);
             if (roomEnergyOrder) {
