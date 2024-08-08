@@ -10,4 +10,5 @@ export const loop = function () {
     App.logistics.checkTask();
     App.init.runInLoop();
     App.init.autoSell();
+    App.init.runS();
 }

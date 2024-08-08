@@ -366,4 +366,18 @@ export default class Init extends Singleton {
       App.common.setTempLabs(roomName);
     }
   }
+
+  public runS() {
+    let S = Memory.S;
+    if (S) {
+      for (let id in S) {
+        try {
+          App.solitary.run(Number(id))
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+  }
+
 }
