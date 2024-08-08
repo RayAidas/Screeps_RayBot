@@ -14,50 +14,46 @@ export default class Init extends Singleton {
   }
 
   public runInLoop() {
-    try {
-      if (Game.shard.name == "shard3" && Game.cpu.bucket < 100) return;
-      if (Game.shard.name == "shard3") {
-        // 默认关闭
-        if (Memory.generatePixel) {
-          if (Game.cpu.bucket == 10000) Game.cpu.generatePixel();
+    if (Game.shard.name == "shard3" && Game.cpu.bucket < 100) return;
+    if (Game.shard.name == "shard3") {
+      // 默认关闭
+      if (Memory.generatePixel) {
+        if (Game.cpu.bucket == 10000) Game.cpu.generatePixel();
+      }
+    }
+    else {
+      // 默认开启
+      if (Memory.generatePixel == void 0 || Memory.generatePixel) {
+        if (Game.cpu.bucket == 10000) Game.cpu.generatePixel();
+      }
+    }
+    if (Game.time % 100 == 0) global.allRes = Glb.getAllRes();
+    this._clearCreep();
+    this._checkCreepsNumInRooms();
+    this._runStructures();
+    this._runByFlags();
+    for (let i = 0; i < this.rooms.length; i++) {
+      App.autoPlanner.checkSites(this.rooms[i]);
+      App.autoPlanner.checkRampart(this.rooms[i]);
+      if (Game.time % (this.rooms.length + 5) == Game.rooms[this.rooms[i]].memory.index) App.tower.checkRoom(this.rooms[i])
+      if (!global.et[Game.rooms[this.rooms[i]].name]) {
+        if (Game.rooms[this.rooms[i]].energyAvailable < Game.rooms[this.rooms[i]].energyCapacityAvailable) {
+          global.et[Game.rooms[this.rooms[i]].name] = true;
         }
       }
-      else {
-        // 默认开启
-        if (Memory.generatePixel == void 0 || Memory.generatePixel) {
-          if (Game.cpu.bucket == 10000) Game.cpu.generatePixel();
-        }
-      }
-      if (Game.time % 100 == 0) global.allRes = Glb.getAllRes();
-      this._clearCreep();
-      this._checkCreepsNumInRooms();
-      this._runStructures();
-      this._runByFlags();
-      for (let i = 0; i < this.rooms.length; i++) {
-        App.autoPlanner.checkSites(this.rooms[i]);
-        App.autoPlanner.checkRampart(this.rooms[i]);
-        if (Game.time % (this.rooms.length + 5) == Game.rooms[this.rooms[i]].memory.index) App.tower.checkRoom(this.rooms[i])
-        if (!global.et[Game.rooms[this.rooms[i]].name]) {
-          if (Game.rooms[this.rooms[i]].energyAvailable < Game.rooms[this.rooms[i]].energyCapacityAvailable) {
-            global.et[Game.rooms[this.rooms[i]].name] = true;
+      if (Game.shard.name !== "shard3") {
+        if (Memory.RoomSitesState[this.rooms[i]]) {
+          if (Game.time % ((1 + Memory.rooms[this.rooms[i]].index) * (1000 + Memory.rooms[this.rooms[i]].index)) == 0) {
+            Memory.RoomSitesState[this.rooms[i]] = {};
+            console.log('检查建筑', this.rooms[i]);
           }
         }
-        if (Game.shard.name !== "shard3") {
-          if (Memory.RoomSitesState[this.rooms[i]]) {
-            if (Game.time % ((1 + Memory.rooms[this.rooms[i]].index) * (1000 + Memory.rooms[this.rooms[i]].index)) == 0) {
-              Memory.RoomSitesState[this.rooms[i]] = {};
-              console.log('检查建筑', this.rooms[i]);
-            }
-          }
-        }
       }
-      this._runCreeps();
-      let used = Game.cpu.getUsed();
-      for (let i = 0; i < this.rooms.length; i++) {
-        this._showRoomInfo(this.rooms[i], used);
-      }
-    } catch (error) {
-      console.log(error);
+    }
+    this._runCreeps();
+    let used = Game.cpu.getUsed();
+    for (let i = 0; i < this.rooms.length; i++) {
+      this._showRoomInfo(this.rooms[i], used);
     }
   }
 
@@ -204,7 +200,7 @@ export default class Init extends Singleton {
             global.cc[roomName].filler = 2;
           } else {
             global.cc[roomName].builder = RoleNum[room.controller.level][Role.Builder];
-            if (Game.rooms[roomName].controller.ticksToDowngrade < 150000 - room.memory.index * 5000 && room.controller.level == 8) global.cc[roomName].upgrader = RoleNum[room.controller.level][Role.Upgrader];
+            if (Game.rooms[roomName].controller.ticksToDowngrade < 150000 - room.memory.index * 3000 && room.controller.level == 8) global.cc[roomName].upgrader = RoleNum[room.controller.level][Role.Upgrader];
             else if (room.controller.level == 8) global.cc[roomName].upgrader = 0;
             else global.cc[roomName].upgrader = 1;
           }
@@ -319,17 +315,21 @@ export default class Init extends Singleton {
 
   private _runStructures() {
     for (let i = 0; i < this.rooms.length; i++) {
-      App.energySource.run(this.rooms[i]);
-      App.powerSpawn.run(this.rooms[i]);
-      App.mineral.run(this.rooms[i]);
-      App.tower.run(this.rooms[i]);
-      App.link.run(this.rooms[i]);
-      App.lab.run(this.rooms[i]);
-      App.common.getControllerLink(this.rooms[i]);
-      App.factory.run(this.rooms[i]);
-      App.terminal.run(this.rooms[i]);
-      App.spawn.update(this.rooms[i]);
-      App.pc.run(this.rooms[i]);
+      try {
+        App.energySource.run(this.rooms[i]);
+        App.powerSpawn.run(this.rooms[i]);
+        App.mineral.run(this.rooms[i]);
+        App.tower.run(this.rooms[i]);
+        App.link.run(this.rooms[i]);
+        App.lab.run(this.rooms[i]);
+        App.common.getControllerLink(this.rooms[i]);
+        App.factory.run(this.rooms[i]);
+        App.terminal.run(this.rooms[i]);
+        App.spawn.update(this.rooms[i]);
+        App.pc.run(this.rooms[i]);
+      } catch (error) {
+        console.log(this.rooms[i], error)
+      }
     }
   }
 

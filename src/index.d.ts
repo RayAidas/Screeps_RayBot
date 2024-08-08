@@ -198,7 +198,7 @@ interface Memory {
 			[creepName: string]: {
 				type: MineralBoostConstant,
 				num: number,
-			}[]
+			}[],
 		}
 	},
 	RoomControlData: RoomControlData
