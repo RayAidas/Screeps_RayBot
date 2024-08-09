@@ -19,9 +19,11 @@ export default class PC extends Singleton {
         if (powerCreep?.ticksToLive) {
             switch (taskName) {
                 case "operate_factory":
+                    if (global.allRes.ops < 1000) return;
                     if (!powerCreep.powers[PWR_OPERATE_FACTORY]) return;
                     break;
                 case "operate_storage":
+                    if (global.allRes.ops < 1000) return;
                     if (!powerCreep.powers[PWR_OPERATE_STORAGE]) return;
                     break;
                 case "operate_source":
@@ -33,6 +35,7 @@ export default class PC extends Singleton {
                     if (powerCreep.powers[PWR_OPERATE_EXTENSION].cooldown) return;
                     break;
                 case "operate_spawn":
+                    if (global.allRes.ops < 1000) return;
                     if (!powerCreep.powers[PWR_OPERATE_SPAWN]) return;
                     if (powerCreep.powers[PWR_OPERATE_SPAWN].cooldown) return;
                     break;
@@ -56,11 +59,14 @@ export default class PC extends Singleton {
     }
 
     public run(room: string) {
-        let shard = Game.shard.name
         if (!Memory.pcConfig[room]) return;
 
         let powerCreep = Game.powerCreeps[Memory.pcConfig[room]];
         if (powerCreep?.ticksToLive) {
+            if (powerCreep.pos.x == 0 || powerCreep.pos.x == 49 || powerCreep.pos.y == 0 || powerCreep.pos.y == 49) {
+                powerCreep.customMove(Game.rooms[room].storage.pos);
+                return;
+            }
             if (powerCreep.room.memory?.factory.lv == void 0 && powerCreep.powers[PWR_OPERATE_FACTORY]) {
                 powerCreep.room.memory.factory.lv = powerCreep.powers[PWR_OPERATE_FACTORY].level;
             }
@@ -104,7 +110,6 @@ export default class PC extends Singleton {
     }
 
     public spawn(room: string) {
-        let shard = Game.shard.name;
         if (Game.getObjectById(Game.rooms[room].memory.powerSpawnId)) Game.powerCreeps[Memory.pcConfig[room]].spawn(Game.getObjectById(Game.rooms[room].memory.powerSpawnId));
     }
 

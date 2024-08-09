@@ -11,6 +11,7 @@ export const Role = {
   RemoteTransfer: 'remoteTransfer',
   Attacker: 'attacker',
   Repairer: 'repairer',
+  S: 'S',
 
   RemoteHarvester: 'remoteHarvester',
   RemoteReserver: 'remoteReserver',
@@ -28,8 +29,13 @@ export const Role = {
   Defense_Attacker: 'defense_attacker',
   GF: 'GF',
   GT: 'GT',
-  L: 'L',
   Transfer: 'transfer',
+}
+
+export const GroupState = {
+  idle: 'Idle',
+  move: 'Move',
+  aggregate: 'Aggregate',
 }
 
 export const compound: MineralCompounds = {

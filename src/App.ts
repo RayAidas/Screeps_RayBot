@@ -105,6 +105,11 @@ export default class App {
     return managers.PC.getInstance();
   }
 
+  static get solitary() {
+    return managers.Solitary.getInstance();
+  }
+
+
   // static get observer() {
   //   return managers.Observer.getInstance();
   // }
@@ -124,10 +129,6 @@ export default class App {
 
   // static get group() {
   //   return managers.Group.getInstance();
-  // }
-
-  // static get loner(){
-  //   return managers.Loner.getInstance();
   // }
 
   // static get groupF() {

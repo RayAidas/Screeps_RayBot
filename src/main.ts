@@ -12,4 +12,5 @@ export const loop = errorMapper(() => {
     App.logistics.checkTask();
     App.init.runInLoop();
     App.init.autoSell();
+    App.init.runS();
 })

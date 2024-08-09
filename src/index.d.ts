@@ -81,7 +81,7 @@ interface GlobalExtension {
 	changePrice(resource: ResourceConstant, price: number): void,
 	createGF(id: number, from: string, targetRoom: string, point: RoomPosition, targetStructure?: StructureConstant): void;
 	createGT(id: number, from: string, targetRoom: string, point: RoomPosition, type: string, persistent: boolean, targetStructure?: StructureConstant): void;
-	createL(id: number, from: string, targetRoom: string, type: string, persistent: boolean, nums?: number, targetStructure?: StructureConstant): void;
+	createS(id: number, from: string, targetRoom: string, type: string, nums?: number, sustained?: boolean, targetStructure?: StructureConstant, interval?: number): void;
 	sendTask(targetRoom: string, resource: ResourceConstant, num: number, selfRoom?: string): void;
 	setSellRes(roomName: string, res: ResourceConstant, price: number, interval: number, num: number): void;
 	addWhiteList(username: string): void;
@@ -170,7 +170,7 @@ interface Memory {
 			aggregateState?: boolean,
 		}
 	},
-	GT: {
+	GD: {
 		[id: number]: {
 			state: string,
 			from: string,
@@ -181,16 +181,17 @@ interface Memory {
 			targetStructure?: StructureConstant,
 		}
 	},
-	L: {
+	S: {
 		[id: number]: {
 			state: string,
 			from: string,
 			type: string,
 			targetRoom: string,
-			persistent: boolean,
+			sustained: boolean,
+			time: number,
 			nums?: number,
 			targetStructure?: StructureConstant,
-			time?: number
+			interval?: number
 		}
 	}
 	boostList: {
@@ -198,7 +199,7 @@ interface Memory {
 			[creepName: string]: {
 				type: MineralBoostConstant,
 				num: number,
-			}[]
+			}[],
 		}
 	},
 	RoomControlData: RoomControlData
@@ -276,7 +277,8 @@ interface CreepMemory {
 	healer?: string,
 	isCreate?: boolean,
 	upgradePos?: RoomPosition,
-	transferState?: boolean
+	transferState?: boolean,
+	boost?: boolean
 }
 
 interface FlagMemory { }

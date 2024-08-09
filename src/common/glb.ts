@@ -1,3 +1,4 @@
+import App from "@/App";
 import { colorful, colorHex, format, getColor } from "@/common/utils";
 import Singleton from "@/Singleton";
 
@@ -24,7 +25,7 @@ export default class Glb extends Singleton {
 		global.changePrice = this._changePrice;
 		global.createGF = this._createGF;
 		global.createGT = this._createGT;
-		global.createL = this._createL;
+		global.createS = this._createS;
 		global.sendTask = this._sendTask;
 		global.setSellRes = this._setSellRes;
 		global.addWhiteList = this._addWhiteList;
@@ -476,8 +477,8 @@ export default class Glb extends Singleton {
 		// App.group.create(id, from, targetRoom, point, type, persistent, targetStructure);
 	}
 
-	private _createL(id: number, from: string, targetRoom: string, type: string, persistent: boolean = false, nums: number = 0, targetStructure: StructureConstant = null, time: boolean = false) {
-		// App.loner.create(id, from, targetRoom, type, persistent, nums, targetStructure, time);
+	private _createS(id: number, from: string, targetRoom: string, type: string, nums: number = 1, sustained: boolean = false, targetStructure: StructureConstant = null, interval?: number) {
+		App.solitary.create(id, from, targetRoom, type, sustained, nums, targetStructure, interval);
 	};
 
 	private _createRoomTask(taksId: number, roomName: string, targetRoom: string, role: Role, operate: string, targetStructure: STRUCTURE_STORAGE | STRUCTURE_TERMINAL, num: number, res?: ResourceConstant) {
