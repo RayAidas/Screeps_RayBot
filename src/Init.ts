@@ -24,33 +24,32 @@ export default class Init extends Singleton {
         if (Memory.generatePixel) {
           if (Game.cpu.bucket == 10000) Game.cpu.generatePixel();
         }
-      }
-    }
-    else {
-      // 默认开启
-      if (Memory.generatePixel == void 0 || Memory.generatePixel) {
-        if (Game.cpu.bucket == 10000) Game.cpu.generatePixel();
-      }
-    }
-    if (Game.time % 100 == 0) global.allRes = Glb.getAllRes();
-    this._clearCreep();
-    this._checkCreepsNumInRooms();
-    this._runStructures();
-    this._runByFlags();
-    for (let i = 0; i < this.rooms.length; i++) {
-      App.autoPlanner.checkSites(this.rooms[i]);
-      App.autoPlanner.checkRampart(this.rooms[i]);
-      if (Game.time % (this.rooms.length + 5) == Game.rooms[this.rooms[i]].memory.index) App.tower.checkRoom(this.rooms[i])
-      if (!global.et[Game.rooms[this.rooms[i]].name]) {
-        if (Game.rooms[this.rooms[i]].energyAvailable < Game.rooms[this.rooms[i]].energyCapacityAvailable) {
-          global.et[Game.rooms[this.rooms[i]].name] = true;
+      } else {
+        // 默认开启
+        if (Memory.generatePixel == void 0 || Memory.generatePixel) {
+          if (Game.cpu.bucket == 10000) Game.cpu.generatePixel();
         }
       }
-      if (Game.shard.name !== "shard3") {
-        if (Memory.RoomSitesState[this.rooms[i]]) {
-          if (Game.time % ((1 + Memory.rooms[this.rooms[i]].index) * (1000 + Memory.rooms[this.rooms[i]].index)) == 0) {
-            Memory.RoomSitesState[this.rooms[i]] = {};
-            console.log('检查建筑', this.rooms[i]);
+      if (Game.time % 100 == 0) global.allRes = Glb.getAllRes();
+      this._clearCreep();
+      this._checkCreepsNumInRooms();
+      this._runStructures();
+      this._runByFlags();
+      for (let i = 0; i < this.rooms.length; i++) {
+        App.autoPlanner.checkSites(this.rooms[i]);
+        App.autoPlanner.checkRampart(this.rooms[i]);
+        if (Game.time % (this.rooms.length + 5) == Game.rooms[this.rooms[i]].memory.index) App.tower.checkRoom(this.rooms[i])
+        if (!global.et[Game.rooms[this.rooms[i]].name]) {
+          if (Game.rooms[this.rooms[i]].energyAvailable < Game.rooms[this.rooms[i]].energyCapacityAvailable) {
+            global.et[Game.rooms[this.rooms[i]].name] = true;
+          }
+        }
+        if (Game.shard.name !== "shard3") {
+          if (Memory.RoomSitesState[this.rooms[i]]) {
+            if (Game.time % ((1 + Memory.rooms[this.rooms[i]].index) * (1000 + Memory.rooms[this.rooms[i]].index)) == 0) {
+              Memory.RoomSitesState[this.rooms[i]] = {};
+              console.log('检查建筑', this.rooms[i]);
+            }
           }
         }
       }
@@ -60,6 +59,7 @@ export default class Init extends Singleton {
       for (let i = 0; i < this.rooms.length; i++) {
         this._showRoomInfo(this.rooms[i], used);
       }
+
     } catch (error) {
       console.log(error);
     }
