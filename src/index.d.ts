@@ -230,7 +230,8 @@ interface Memory {
 	generatePixel: boolean,
 	pcConfig: {
 		[roomName: string]: string
-	}
+	},
+	market: {}
 }
 
 interface Creeps {
@@ -331,11 +332,14 @@ interface RoomMemory {
 	centerLinkId?: Id<StructureLink>,
 	controllerLinkPos?: RoomPosition,
 	controllerLinkId?: Id<StructureLink>,
+	controllerContainerId?: Id<StructureContainer>
 	powerSpawnId?: Id<StructurePowerSpawn>,
 	ignoreRoom?: string[],
 	ruinState?: boolean,
 	ruinEnergyState?: boolean,
 	customRampartSites?: RoomPosition[],
+	energyOrder?: string,	// 能量购买订单
+	nuker: Id<StructureNuker>,
 }
 interface RoomTask {
 	[roomName: string]: {

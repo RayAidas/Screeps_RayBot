@@ -65,8 +65,8 @@ export default class EnergySource extends Singleton {
                     else if (centerLink && centerLink.store.energy < 400 && !link.cooldown) link.transferEnergy(centerLink);
                 }
 
-                if (link && centerLink) continue;
-
+                // if (link && centerLink) continue;
+                
                 if (!sourceMem.carrier) {
                     let creepName = GenNonDuplicateID();
                     App.spawn.run(source.room.name, Role.Carrier, creepName);

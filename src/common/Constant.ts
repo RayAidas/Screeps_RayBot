@@ -172,7 +172,7 @@ export const bodyConfigs: BodyConfigs = {
     { [CARRY]: 14, [MOVE]: 7 },
     { [CARRY]: 14, [MOVE]: 7 },
     { [CARRY]: 10, [MOVE]: 5 },
-    { [CARRY]: 20, [MOVE]: 10 },
+    { [CARRY]: 10, [MOVE]: 5 },
   ),
   builder: getBodyConfig(
     { [WORK]: 1, [CARRY]: 1, [MOVE]: 1 },
@@ -195,7 +195,7 @@ export const bodyConfigs: BodyConfigs = {
     { [WORK]: 4, [CARRY]: 8, [MOVE]: 6 },
     { [WORK]: 6, [CARRY]: 10, [MOVE]: 8 },
     { [WORK]: 8, [CARRY]: 12, [MOVE]: 10 },
-    { [WORK]: 15, [CARRY]: 3, [MOVE]: 15 },
+    { [WORK]: 15, [CARRY]: 10, [MOVE]: 15 },
     { [WORK]: 15, [CARRY]: 3, [MOVE]: 15 }
   ),
 
@@ -249,7 +249,7 @@ export const bodyConfigs: BodyConfigs = {
     { [ATTACK]: 25, [MOVE]: 25 },
     { [ATTACK]: 25, [MOVE]: 25 },
     { [ATTACK]: 25, [MOVE]: 25 },
-    { [ATTACK]: 25, [MOVE]: 25 },
+    { [ATTACK]: 15, [MOVE]: 15 },
     { [ATTACK]: 25, [MOVE]: 25 },
     { [ATTACK]: 25, [MOVE]: 25 },
   ),

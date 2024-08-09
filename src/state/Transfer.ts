@@ -220,4 +220,6 @@ export default class Transfer extends Singleton {
         }
         App.common.transferToTargetStructure(creep, target);
     }
+
+
 }
