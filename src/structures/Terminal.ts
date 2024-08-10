@@ -37,8 +37,15 @@ export default class Terminal extends Singleton {
                 }
             }
         }
-
+        // TODO 有BUG待修复，下单失败的情况也return了，导致后续的订单没有机会下单
         if (Game.time % (terminal.room.memory.index + 20) == 0) {
+            if (terminal.store.power < 1000) {
+                global.autoDeal(terminal.room.name, 'power', 1300);
+                return;
+            }
+            if (global.allRes.XGH2O < 20000) {
+                global.autoDeal(terminal.room.name, "XGH2O", 1940, 2000)
+            }
             if (global.allRes.KH < 100000) {
                 global.autoDeal(terminal.room.name, "KH", 120, 1000);
                 return;
@@ -47,17 +54,10 @@ export default class Terminal extends Singleton {
                 global.autoDeal(terminal.room.name, "LH", 300, 1000);
                 return;
             }
-            if (global.allRes.XGH2O < 20000) {
-                global.autoDeal(terminal.room.name, "XGH2O", 900, 2000)
-            }
             if (terminal.room.controller.level < 8) return;
             let type: MineralConstant = room.memory.mineral.type;
             if (global.allRes[type] < 4000 * Memory.myrooms.length) {
                 global.autoDeal(terminal.room.name, type, 80);
-                return;
-            }
-            if (terminal.store.power < 1000) {
-                global.autoDeal(terminal.room.name, 'power', 500);
                 return;
             }
         }
