@@ -238,6 +238,15 @@ export default class Transfer extends Singleton {
                 }
             }
             if (!target) return;
+            if (creep.ticksToLive < 20) {
+                if (creep.store.getUsedCapacity() == 0) {
+                    creep.suicide();
+                    return;
+                } else {
+                    App.fsm.changeState(creep, State.TransferToControllerContainer);
+                    return;
+                }
+            }
             if (creep.store.getUsedCapacity() == 0) {
                 App.fsm.changeState(creep, State.Withdraw);
                 return;
