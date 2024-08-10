@@ -64,7 +64,13 @@ export default class AutoPlanner extends Singleton {
                         Memory.RoomControlData[flag.pos.roomName].rams = global.roomStructsData.structMap.rampart;
                         console.log(global.roomStructsData.structMap.rampart)
                         Game.flags.savestructMap.remove();
-                        console.log(`[LayoutVisual63] 房间${flag.pos.roomName}63布局已经刷新`)
+                        console.log(`[LayoutVisual63] 房间${flag.pos.roomName}63布局已经刷新`);
+                        // 布局刷新之后移除布局相关的旗子
+                        if (pa) Game.flags.pa.remove();
+                        if (pb) Game.flags.pb.remove();
+                        if (pc) Game.flags.pc.remove();
+                        if (pm) Game.flags.pm.remove();
+                        if (Game.flags.storagePos) Game.flags.storagePos.remove();
                     }
                 }
 

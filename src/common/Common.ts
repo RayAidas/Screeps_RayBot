@@ -110,6 +110,24 @@ export default class Common extends Singleton {
         }
     }
 
+    public getcontrollerContainerId(roomName: string): void {
+        let room = Game.rooms[roomName];
+        let controllerContainers: StructureContainer[] = [];
+        controllerContainers = room.controller.pos.findInRange(FIND_STRUCTURES, 5, {
+            filter: (stru) => {
+                return stru.structureType == 'container'
+            }
+        }) as StructureContainer[];
+        if (controllerContainers.length > 0) {
+            room.memory.controllerContainerId ??= [];
+            let controllerContainerIdList = [];
+            for (let container of controllerContainers) {
+                controllerContainerIdList.push(container.id);
+            }
+            room.memory.controllerContainerId = controllerContainerIdList;
+        }
+    }
+
     public isPosEqual(pos1: RoomPosition, pos2: RoomPosition) {
         if (pos1.x == pos2.x && pos1.y == pos2.y && pos1.roomName == pos2.roomName) return true;
         else return false;
@@ -326,6 +344,19 @@ export default class Common extends Singleton {
             }
         })
         room.memory.powerSpawnId = powerSpawn;
+    }
+
+    public findNuker(roomName: string) {
+        let room = Game.rooms[roomName];
+        if (Game.getObjectById(room.memory.nuker)) return;
+        let nuker: Id<StructureNuker> = null;
+        room.find(FIND_STRUCTURES, {
+            filter: (structure) => {
+                if (structure.structureType == STRUCTURE_NUKER)
+                nuker = structure.id;
+            }
+        })
+        room.memory.nuker = nuker;
     }
 
     public getSources(roomName: string) {

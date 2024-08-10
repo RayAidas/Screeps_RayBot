@@ -18,5 +18,6 @@ export const State = {
   Back: 'Back',
   Boost: 'Boost',
   Unboost: 'Unboost',
+  TransferToControllerContainer: 'TransferToControllerContainer',
 }
 

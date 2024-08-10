@@ -129,7 +129,7 @@ export default class Solitary extends Singleton {
 						type: MineralBoostConstant;
 						num: number;
 					}[] = [];
-					console.log(JSON.stringify(types))
+					// console.log(JSON.stringify(types))
 					for (let body in bodys[s.type]) {
 						types.push({
 							type: BoostType[body],
