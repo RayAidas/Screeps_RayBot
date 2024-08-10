@@ -59,6 +59,9 @@ export default class FsmControl extends FsmSystem {
   // public TransferToNuker(creep: Creep) {
   //   App.transfer.ToNuker(creep);
   // }
+  public TransferToControllerContainer(creep: Creep) {
+    App.transfer.ToControllerContainer(creep);
+  }
 
   public switchState(creep: Creep) {
     switch (creep.memory.role) {
@@ -112,6 +115,8 @@ export default class FsmControl extends FsmSystem {
       case Role.Defense_Healer: creep.memory.state = State.MoveTo;
         break;
       case Role.Transfer: creep.memory.state = State.MoveTo;
+        break;
+      case Role.Transfer2Container: creep.memory.state = State.Withdraw;
         break;
     }
   }

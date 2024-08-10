@@ -61,7 +61,7 @@ export default class EnergySource extends Singleton {
                 let controLink = Game.getObjectById(room.memory.controllerLinkId);
 
                 if (link && link.store.energy > 400) {
-                    if (controLink && controLink.store.energy < 400 && !link.cooldown) link.transferEnergy(controLink);
+                    if (controLink && controLink.store.energy < 500 && !link.cooldown) link.transferEnergy(controLink);
                     else if (centerLink && centerLink.store.energy < 400 && !link.cooldown) link.transferEnergy(centerLink);
                 }
 

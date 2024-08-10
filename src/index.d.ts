@@ -116,7 +116,8 @@ type Role =
 	'depositHarvester' |
 	'defense_attacker' |
 	'defense_healer' |
-	'transfer'
+	'transfer' |
+	'transfer2Container'
 
 interface RoomCreeps {
 	[name: string]: {
@@ -332,7 +333,7 @@ interface RoomMemory {
 	centerLinkId?: Id<StructureLink>,
 	controllerLinkPos?: RoomPosition,
 	controllerLinkId?: Id<StructureLink>,
-	controllerContainerId?: Id<StructureContainer>
+	controllerContainerId?: Id<StructureContainer>[],
 	powerSpawnId?: Id<StructurePowerSpawn>,
 	ignoreRoom?: string[],
 	ruinState?: boolean,
@@ -442,4 +443,5 @@ type BodyAutoConfigConstant =
 	'depositHarvester' |
 	'defense_attacker' |
 	'defense_healer' |
-	'transfer'
+	'transfer' |
+	'transfer2Container'

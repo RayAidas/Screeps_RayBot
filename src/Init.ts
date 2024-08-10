@@ -233,6 +233,13 @@ export default class Init extends Singleton {
             else if (room.controller.level == 8) global.cc[roomName].upgrader = 0;
             else global.cc[roomName].upgrader = 1;
           }
+          // 增加冲级模式，判断房间内有无upgradePlus旗帜
+          let upgradePlusFlag = Game.flags[`${roomName}_upgradePlus`];
+          if (upgradePlusFlag) {
+            global.cc[roomName].upgrader = 10;
+            global.cc[roomName].transfer2Container = 2;
+            global.cc[roomName].filler = 3
+          }
         }
         else {
           global.cc[roomName].builder = 0;

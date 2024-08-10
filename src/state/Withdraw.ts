@@ -462,20 +462,34 @@ export default class Withdraw extends Singleton {
                     return;
                 }
                 let upgradePlusFlag = Game.flags[`${creep.memory.roomFrom}_upgradePlus`];
-                // 如果是冲级模式则不从Link中取能量（只有一个Link）
                 if (!upgradePlusFlag) {
                     if (!creep.memory.constructionId) {
-                        // 优先从controllerContainer中获取能量
-                        let controllerContainer = Game.getObjectById(creep.room.memory.controllerContainerId);
-                        if (controllerContainer && controllerContainer.store[RESOURCE_ENERGY] >= 500) {
-                            this._moveToAndRetrieveEnergy(creep, controllerContainer);
-                            return;
-                        }
                         let controllerLink = Game.getObjectById(creep.room.memory.controllerLinkId);
                         if (controllerLink) {
                             this._moveToAndRetrieveEnergy(creep, controllerLink);
                             return;
                         }
+                    }
+                }
+                // 如果是冲级模式则优先判断判断controllerLink有无能量，其次从controllerContainer等建筑中获取能量
+                if (upgradePlusFlag) {
+                    let controllerLink = Game.getObjectById(creep.room.memory.controllerLinkId);
+                    if (controllerLink && controllerLink.store[RESOURCE_ENERGY] >= 500) {
+                        this._moveToAndRetrieveEnergy(creep, controllerLink);
+                        return;
+                    }
+                    let controllerContainers: Id<StructureContainer>[] = creep.room.memory.controllerContainerId;
+                    let target: StructureContainer;
+                    for (let id of controllerContainers) {
+                        let container = Game.getObjectById(id);
+                        if (container.store[RESOURCE_ENERGY] >= 500) {
+                            target = container;
+                            break;
+                        }
+                    }
+                    if (target) {
+                        this._moveToAndRetrieveEnergy(creep, target);
+                        return;
                     }
                 }
 
@@ -569,6 +583,42 @@ export default class Withdraw extends Singleton {
                         App.fsm.changeState(creep, State.Build);
                     }
                     return;
+                }
+                break;
+            }
+            case Role.Transfer2Container: {
+                if (creep.store.getFreeCapacity() == 0) {
+                    App.fsm.changeState(creep, State.TransferToControllerContainer);
+                    return;
+                }
+                if (creep.room.memory.ruinEnergyState) {
+                    this.withdrawRuin(creep);
+                    return;
+                }
+                if (storage?.store.energy) {
+                    App.common.getResourceFromTargetStructure(creep, storage);
+                    if (creep.store.getFreeCapacity() == 0) App.fsm.changeState(creep, State.TransferToControllerContainer);
+                    return;
+                }
+                if (terminal?.store.energy) {
+                    App.common.getResourceFromTargetStructure(creep, terminal);
+                    if (creep.store.getFreeCapacity() == 0) App.fsm.changeState(creep, State.TransferToControllerContainer);
+                    return;
+                }
+                if (!creep.memory.targetContainer) {
+                    let containers: StructureContainer[] = creep.room.find(FIND_STRUCTURES, {
+                        filter: s => s.structureType == STRUCTURE_CONTAINER && s.store.energy
+                    })
+                    if (containers.length) {
+                        let container = containers.sort((a, b) => b.store.energy - a.store.energy)[0];
+                        creep.memory.targetContainer = container.id;
+                    } else {
+                        this.withdrawRuin(creep);
+                        return;
+                    }
+                } else {
+                    let container = Game.getObjectById(creep.memory.targetContainer);
+                    App.common.getResourceFromTargetStructure(creep, container);
                 }
                 break;
             }

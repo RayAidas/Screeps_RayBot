@@ -213,12 +213,41 @@ export default class Transfer extends Singleton {
         if (!target) {
             App.fsm.changeState(creep, State.TransferToLab);
             return
-        }
+        } 
         if (target.store.energy == 5000) {
             App.fsm.changeState(creep, State.TransferToLab);
             return;
         }
         App.common.transferToTargetStructure(creep, target);
+    }
+
+    /**
+     * 冲级模式下负责向controller附近的container转运energy
+     * @param creep 冲级模式专用
+     * @returns 
+     */
+    public ToControllerContainer(creep: Creep) {
+        if (creep.room.memory.controllerContainerId) {
+            let controllerContainers: Id<StructureContainer>[] = creep.room.memory.controllerContainerId;
+            let target: StructureContainer;
+            for (let id of controllerContainers) {
+                let container = Game.getObjectById(id);
+                if (container.store.getFreeCapacity(RESOURCE_ENERGY) >= 500) {
+                    target = container;
+                    break;
+                }
+            }
+            if (!target) return;
+            if (creep.store.getUsedCapacity() == 0) {
+                App.fsm.changeState(creep, State.Withdraw);
+                return;
+            }
+            if (!creep.store.energy) {
+                App.fsm.changeState(creep, State.TransferToStorage);
+                return;
+            }
+            App.common.transferToTargetStructure(creep, target);
+        }
     }
 
 

@@ -117,6 +117,13 @@ export default class Spawn extends Singleton {
               }
             }
           }
+          if (creep.memory.role == Role.Transfer2Container && upgradePlusFlag) {
+            if (global.allRes["XKH2O"] > 1000) {
+              this._setBoostType(creep, "XKH2O", CARRY);
+            } else if (global.allRes["KH2O"] > 1000 || global.allRes["KH"] > 1000) {
+              this._setBoostType(creep, global.allRes["KH2O"] > 1000 ? "KH2O" : "KH", CARRY);
+            }
+          }
         }
       }
     }
