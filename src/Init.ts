@@ -5,6 +5,7 @@ import Singleton from "./Singleton";
 import { Glb } from "./indexManager";
 import { TalkAll } from "./state/creepChat.js"
 import { State } from "@/fsm/state";
+import { remove } from "lodash";
 
 
 export default class Init extends Singleton {
@@ -236,9 +237,17 @@ export default class Init extends Singleton {
           // 增加冲级模式，判断房间内有无upgradePlus旗帜
           let upgradePlusFlag = Game.flags[`${roomName}_upgradePlus`];
           if (upgradePlusFlag) {
-            global.cc[roomName].upgrader = 10;
-            global.cc[roomName].transfer2Container = 2;
-            global.cc[roomName].filler = 3
+            if (room.controller.level == 8) {
+              upgradePlusFlag.remove();
+              let upgraderBoostFlag = Game.flags[`${roomName}_upgraderBoost`];
+              if (upgraderBoostFlag) {
+                upgraderBoostFlag.remove();
+              }
+            } else {
+              global.cc[roomName].upgrader = 10;
+              global.cc[roomName].transfer2Container = 2;
+              global.cc[roomName].filler = 3;
+            }
           }
         }
         else {

@@ -480,11 +480,24 @@ export default class Withdraw extends Singleton {
                     }
                     let controllerContainers: Id<StructureContainer>[] = creep.room.memory.controllerContainerId;
                     let target: StructureContainer;
+                    let storeTarget: StructureContainer;
                     for (let id of controllerContainers) {
                         let container = Game.getObjectById(id);
+                        if (container.store.getFreeCapacity() >= 500) {
+                            storeTarget = container;
+                        }
                         if (container.store[RESOURCE_ENERGY] >= 500) {
                             target = container;
                             break;
+                        }
+                    }
+                    if (creep.ticksToLive <= 10) {
+                        if (creep.store.getUsedCapacity() == 0) {
+                            creep.suicide();
+                            return;
+                        } else {
+                            App.fsm.changeState(creep, State.TransferToControllerContainer);
+                            return;
                         }
                     }
                     if (target) {
@@ -508,7 +521,7 @@ export default class Withdraw extends Singleton {
                     let containers: StructureContainer[] = creep.room.find(FIND_STRUCTURES, {
                         filter: s => s.structureType == STRUCTURE_CONTAINER && s.store.energy
                     })
-                    if (containers.length) {
+                    if (containers) {
                         let container = containers.sort((a, b) => b.store.energy - a.store.energy)[0];
                         creep.memory.targetContainer = container.id;
                     } else {
@@ -609,7 +622,7 @@ export default class Withdraw extends Singleton {
                     let containers: StructureContainer[] = creep.room.find(FIND_STRUCTURES, {
                         filter: s => s.structureType == STRUCTURE_CONTAINER && s.store.energy
                     })
-                    if (containers.length) {
+                    if (containers) {
                         let container = containers.sort((a, b) => b.store.energy - a.store.energy)[0];
                         creep.memory.targetContainer = container.id;
                     } else {
