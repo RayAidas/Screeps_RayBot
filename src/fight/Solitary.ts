@@ -219,6 +219,8 @@ export default class Solitary extends Singleton {
 
 		let flag = Game.flags[`atk_${creep.room.name}`];
 		let flag2 = Game.flags[`mass_${creep.room.name}`];
+		// TODO 增加ignoreStructor逻辑
+		let ignoreStructor = Game.flags[`ignore_${creep.room.name}`];
 		let target: Structure = null;
 		if (flag2) {
 			creep.rangedMassAttack();
@@ -325,6 +327,8 @@ export default class Solitary extends Singleton {
 			if (controller.owner) {
 				if (creep.attackController(controller) == ERR_NOT_IN_RANGE) {
 					creep.customMove(controller.pos)
+				} else if (creep.attackController(controller) == ERR_TIRED) {
+					creep.suicide();
 				}
 			} else {
 				delete Memory.S[id]
