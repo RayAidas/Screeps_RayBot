@@ -60,7 +60,8 @@ export default class Init extends Singleton {
   private _loadMemory() {
     this.getRooms();
     let rooms: string[] = Memory.myrooms || [];
-    if (!Memory.boostList) Memory.boostList = {}
+    if (!Memory.boostList) Memory.boostList = {};
+    if (!Memory.whiteList) Memory.whiteList = [];
     for (let i = 0; i < rooms.length; i++) {
       App.common.getSources(rooms[i]);
       App.common.getMineral(rooms[i]);
