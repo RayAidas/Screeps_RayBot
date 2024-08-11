@@ -325,9 +325,10 @@ export default class Solitary extends Singleton {
 			}
 		} else if (Memory.S[id].type == 'C') {
 			if (controller.owner) {
-				if (creep.attackController(controller) == ERR_NOT_IN_RANGE) {
+				let res = creep.attackController(controller);
+				if (res == ERR_NOT_IN_RANGE) {
 					creep.customMove(controller.pos)
-				} else if (creep.attackController(controller) == OK) {
+				} else if (res == OK) {
 					creep.suicide();
 				}
 			} else {
