@@ -248,6 +248,8 @@ export default class Init extends Singleton {
               global.cc[roomName].transfer2Container = 2;
               global.cc[roomName].filler = 3;
             }
+          } else {
+            global.cc[roomName].transfer2Container = 0;
           }
         }
         else {
