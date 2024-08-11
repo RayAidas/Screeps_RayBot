@@ -327,7 +327,7 @@ export default class Solitary extends Singleton {
 			if (controller.owner) {
 				if (creep.attackController(controller) == ERR_NOT_IN_RANGE) {
 					creep.customMove(controller.pos)
-				} else if (creep.attackController(controller) == ERR_TIRED) {
+				} else if (creep.attackController(controller) == OK) {
 					creep.suicide();
 				}
 			} else {
