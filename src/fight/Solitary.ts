@@ -246,7 +246,7 @@ export default class Solitary extends Singleton {
 				});
 				if (target) {
 					if (creep.rangedAttack(target) == ERR_NOT_IN_RANGE) {
-						creep.customMove(target.pos, 3, false);
+						creep.customMove(target.pos, 1, false);
 					}
 				}
 			}
