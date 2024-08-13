@@ -100,7 +100,7 @@ export const RoleNum: {
   },
   3: {
     [Role.Builder]: 4,
-    [Role.Upgrader]: 4
+    [Role.Upgrader]: 10
   },
   4: {
     [Role.Builder]: 1,
