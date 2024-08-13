@@ -7,7 +7,6 @@ import Singleton from "@/Singleton";
 
 export default class Withdraw extends Singleton {
     public withdrawRuin(creep: Creep) {
-        if (!creep.room.memory.ruinEnergyState) return;
         let ruin = Game.getObjectById(creep.memory.ruinId);
         if (ruin && ruin.store.energy) {
             App.common.getResourceFromTargetStructure(creep, ruin);
@@ -383,8 +382,30 @@ export default class Withdraw extends Singleton {
                 break;
             }
             case Role.Carrier: {
+                // TODO 冗余代码待优化
                 let container = Game.getObjectById(creep.memory.targetContainer);
-                if (creep.memory.targetContainer == creep.room.memory.mineral.container) {
+                let ruin = Game.getObjectById(creep.memory.ruinId);
+                if (creep.store.getFreeCapacity() == 0) {
+                    App.fsm.changeState(creep, State.TransferToSpawn);
+                    return;
+                }
+                if (ruin && ruin.store.energy) {
+                    App.common.getResourceFromTargetStructure(creep, ruin);
+                    return;
+                } else creep.memory.ruinId = null;
+                if (!creep.memory.ruinId) {
+                    let ruin = creep.pos.findClosestByPath(FIND_RUINS, {
+                        filter: r => r.store.energy
+                    })
+                    if (ruin) {
+                        creep.memory.ruinId = ruin.id;
+                        creep.memory.ruinState = true;
+                    }
+                    else {
+                        App.fsm.changeState(creep, State.Pick);
+                        creep.memory.ruinState = false;
+                    }
+                } else if (creep.memory.targetContainer == creep.room.memory.mineral.container) {
                     if (creep.ticksToLive < 50) {
                         if (creep.store.getUsedCapacity() > 0) App.fsm.changeState(creep, State.TransferToStorage);
                         else creep.suicide();
@@ -395,8 +416,7 @@ export default class Withdraw extends Singleton {
                     }
                     if (creep.store.getFreeCapacity() == 0) App.fsm.changeState(creep, State.TransferToStorage);
                     return;
-                }
-                else {
+                } else {
                     if (creep.store.getFreeCapacity() == 0) {
                         App.fsm.changeState(creep, State.TransferToSpawn);
                         return;
