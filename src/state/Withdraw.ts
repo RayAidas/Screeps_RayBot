@@ -477,12 +477,12 @@ export default class Withdraw extends Singleton {
                     App.fsm.changeState(creep, State.Build);
                     return;
                 }
-                if (creep.room.memory.ruinEnergyState) {
-                    this.withdrawRuin(creep);
-                    return;
-                }
                 let upgradePlusFlag = Game.flags[`${creep.memory.roomFrom}_upgradePlus`];
                 if (!upgradePlusFlag) {
+                    if (creep.room.memory.ruinEnergyState) {
+                        this.withdrawRuin(creep);
+                        return;
+                    }
                     if (!creep.memory.constructionId) {
                         let controllerLink = Game.getObjectById(creep.room.memory.controllerLinkId);
                         if (controllerLink) {

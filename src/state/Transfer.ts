@@ -197,7 +197,7 @@ export default class Transfer extends Singleton {
             if (target.store[target.mineralType] == 3000 || creep.store.getUsedCapacity() == 0) {
                 App.fsm.changeState(creep, State.Withdraw);
             }
-        }else App.fsm.changeState(creep, State.TransferToStorage);
+        }else App.fsm.changeState(creep, State.TransferToControllerContainer);
     }
 
     public ToPowerSpawn(creep: Creep) {
@@ -237,7 +237,9 @@ export default class Transfer extends Singleton {
                     break;
                 }
             }
-            if (!target) return;
+            if (!target) {
+                App.fsm.changeState(creep, State.TransferToStorage);
+            }
             if (creep.ticksToLive < 20) {
                 if (creep.store.getUsedCapacity() == 0) {
                     creep.suicide();
