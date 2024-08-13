@@ -20,6 +20,7 @@
     "push": "rollup -cw --environment DEST:main",
     "local": "rollup -cw --environment DEST:local",
     "sb": "rollup -cw --environment DEST:sb",
-    "acf": "rollup -cw --environment DEST:acf"
+    "acf": "rollup -cw --environment DEST:acf",
+    "singer": "rollup -cw --environment DEST:SponSinger"
   }
 }
