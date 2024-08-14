@@ -40,7 +40,7 @@ export const customMove = function (target: RoomPosition, range: number = 1, ign
 					return;
 				}
 				if (obstacle.memory.targetPos) {
-					if (creep.memory.targetPos && obstacle.memory.path.length) {
+					if (creep.memory.targetPos && obstacle.memory.path?.length) {
 						creep.memory.path = null;
 						pathFinder(creep, target, range, false)
 						return;
