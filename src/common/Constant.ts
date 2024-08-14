@@ -224,8 +224,8 @@ export const bodyConfigs: BodyConfigs = {
   centerTransfer: getBodyConfig(
     { [CARRY]: 4, [MOVE]: 4 },
     { [CARRY]: 8, [MOVE]: 8 },
-    { [CARRY]: 20, [MOVE]: 10 },
-    { [CARRY]: 20, [MOVE]: 10 },
+    { [CARRY]: 10, [MOVE]: 5 },
+    { [CARRY]: 15, [MOVE]: 10 },
     { [CARRY]: 20, [MOVE]: 10 },
     { [CARRY]: 20, [MOVE]: 10 },
     { [CARRY]: 30, [MOVE]: 15 },
