@@ -125,6 +125,8 @@ export default class Common extends Singleton {
                 controllerContainerIdList.push(container.id);
             }
             room.memory.controllerContainerId = controllerContainerIdList;
+        } else {
+            room.memory.controllerContainerId = [];
         }
     }
 

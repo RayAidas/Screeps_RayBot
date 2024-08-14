@@ -96,6 +96,7 @@ export default class Init extends Singleton {
       App.common.getSources(rooms[i]);
       App.common.getMineral(rooms[i]);
       App.common.getStructrues(rooms[i]);
+      App.common.getcontrollerContainerId(rooms[i]);
       if (!Memory.boostList[rooms[i]]) Memory.boostList[rooms[i]] = {}
     }
     if (!Memory.pcConfig) {
