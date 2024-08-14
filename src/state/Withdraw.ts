@@ -492,7 +492,7 @@ export default class Withdraw extends Singleton {
                     }
                 }
                 // 如果是冲级模式则优先判断判断controllerLink有无能量，其次从controllerContainer等建筑中获取能量
-                if (upgradePlusFlag && creep.memory.state == State.Upgrade) {
+                if (upgradePlusFlag) {
                     let controllerLink = Game.getObjectById(creep.room.memory.controllerLinkId);
                     if (controllerLink && controllerLink.store[RESOURCE_ENERGY] >= 500) {
                         this._moveToAndRetrieveEnergy(creep, controllerLink);
