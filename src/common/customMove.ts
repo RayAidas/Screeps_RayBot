@@ -44,7 +44,7 @@ export const customMove = function (target: RoomPosition, range: number = 1, ign
 						creep.memory.path = null;
 						pathFinder(creep, target, range, false)
 						return;
-					} else if (!obstacle.memory.path.length) {
+					} else if (!obstacle.memory.path?.length) {
 						moveStep(creep);
 						let dir = obstacle.pos.getDirectionTo(curr.x, curr.y);
 						obstacle.move(dir);
