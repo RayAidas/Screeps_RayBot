@@ -224,6 +224,7 @@ export default class Init extends Singleton {
         let storage = room.storage;
         let terminal = room.terminal;
         let energyAcount = (storage ? storage.store.energy : 0) + (terminal ? terminal.store.energy : 0);
+        let upgradePlusFlag = Game.flags[`${roomName}_upgradePlus`];
         if (energyAcount > 200000) {
           if (energyAcount > 500000 && room.controller.level < 8) {
             global.cc[roomName].builder = RoleNum[room.controller.level][Role.Builder];
@@ -236,7 +237,6 @@ export default class Init extends Singleton {
             else global.cc[roomName].upgrader = 1;
           }
           // 增加冲级模式，判断房间内有无upgradePlus旗帜
-          let upgradePlusFlag = Game.flags[`${roomName}_upgradePlus`];
           if (upgradePlusFlag) {
             if (room.controller.level == 8) {
               upgradePlusFlag.remove();
@@ -252,8 +252,11 @@ export default class Init extends Singleton {
           } else {
             global.cc[roomName].transfer2Container = 0;
           }
-        }
-        else {
+        } else if (upgradePlusFlag) {
+          global.cc[roomName].upgrader = 10;
+          global.cc[roomName].transfer2Container = 2;
+          global.cc[roomName].filler = 3;
+        } else {
           global.cc[roomName].builder = 0;
           global.cc[roomName].upgrader = 0;
           if (room.controller.ticksToDowngrade < 100000 || room.controller.level < 8) global.cc[roomName].upgrader = 3;
