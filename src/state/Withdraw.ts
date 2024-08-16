@@ -382,30 +382,29 @@ export default class Withdraw extends Singleton {
                 break;
             }
             case Role.Carrier: {
-                // TODO 冗余代码待优化
+                // TODO 代码待优化
                 let container = Game.getObjectById(creep.memory.targetContainer);
-                let ruin = Game.getObjectById(creep.memory.ruinId);
+                // let ruin = Game.getObjectById(creep.memory.ruinId);
                 if (creep.store.getFreeCapacity() == 0) {
                     App.fsm.changeState(creep, State.TransferToSpawn);
                     return;
                 }
-                if (ruin && ruin.store.energy) {
-                    App.common.getResourceFromTargetStructure(creep, ruin);
-                    return;
-                } else creep.memory.ruinId = null;
-                if (!creep.memory.ruinId) {
-                    let ruin = creep.pos.findClosestByPath(FIND_RUINS, {
-                        filter: r => r.store.energy
-                    })
-                    if (ruin) {
-                        creep.memory.ruinId = ruin.id;
-                        creep.memory.ruinState = true;
-                    }
-                    else {
-                        App.fsm.changeState(creep, State.Pick);
-                        creep.memory.ruinState = false;
-                    }
-                } else if (creep.memory.targetContainer == creep.room.memory.mineral.container) {
+                // if (ruin && ruin.store.energy) {
+                //     App.common.getResourceFromTargetStructure(creep, ruin);
+                //     return;
+                // } else {
+                //     let ruin = creep.pos.findClosestByPath(FIND_RUINS, {
+                //         filter: r => r.store.energy
+                //     });
+                //     if (ruin) {
+                //         creep.memory.ruinId = ruin.id;
+                //         creep.memory.ruinState = true;
+                //     } else {
+                //         App.fsm.changeState(creep, State.Pick);
+                //         creep.memory.ruinState = false;
+                //     }
+                // }
+                if (creep.memory.targetContainer == creep.room.memory.mineral.container) {
                     if (creep.ticksToLive < 50) {
                         if (creep.store.getUsedCapacity() > 0) App.fsm.changeState(creep, State.TransferToStorage);
                         else creep.suicide();

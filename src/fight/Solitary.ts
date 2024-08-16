@@ -18,11 +18,13 @@ const bodys = {
 	'B-W': { [WORK]: 40, [MOVE]: 10 },
 	'RA': { [RANGED_ATTACK]: 10, [MOVE]: 10 },
 	'W': { [WORK]: 25, [MOVE]: 25 },
+	'B-W-40': { [WORK]: 40, [MOVE]: 10 },
 	'A': { [ATTACK]: 10, [MOVE]: 10 },
 	'C': { [CLAIM]: 20, [MOVE]: 18 },
 	'R': { [CLAIM]: 4, [MOVE]: 4 },
 	"TEST": { [ATTACK]: 1, [MOVE]: 1 },
 	"B-TEST": { [ATTACK]: 1, [MOVE]: 1 },
+	"B-W-TEST":  { [WORK]: 1, [MOVE]: 1 },
 }
 
 const BoostType: {
