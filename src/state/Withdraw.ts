@@ -141,6 +141,18 @@ export default class Withdraw extends Singleton {
                         }
                     }
                 }
+                // Lab0
+                let lab0 = Game.getObjectById(creep.room.memory.labs[0]);
+                if (lab0 && lab0.store.energy < 2000) {
+                    if (creep.store.energy) {
+                        App.common.transferToTargetStructure(creep, lab0, 'energy');
+                    } else if (creep.store.getUsedCapacity() > 0) {
+                        App.common.transferToTargetStructure(creep, storage);
+                    } else if (creep.store.getUsedCapacity() == 0) {
+                        App.common.getResourceFromTargetStructure(creep, storage, 'energy');
+                    }
+                    return;
+                }
                 creep.memory.test = 2;
                 // Lab
                 if (creep.room.memory.labs.clear) {
