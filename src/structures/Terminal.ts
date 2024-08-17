@@ -39,7 +39,7 @@ export default class Terminal extends Singleton {
         }
         // TODO 有BUG待修复，下单失败的情况也return了，导致后续的订单没有机会下单
         if (Game.time % (terminal.room.memory.index + 20) == 0) {
-            if (terminal.store.power < 10000) {
+            if (terminal.room.storage.store.power < 10000) {
                 global.autoDeal(terminal.room.name, 'power', 1200);
                 return;
             }
