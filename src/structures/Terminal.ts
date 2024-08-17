@@ -46,12 +46,12 @@ export default class Terminal extends Singleton {
             if (global.allRes.XGH2O < 20000) {
                 global.autoDeal(terminal.room.name, "XGH2O", 1940, 2000)
             }
-            if (global.allRes.KH < 100000) {
-                global.autoDeal(terminal.room.name, "KH", 120, 1000);
+            if (global.allRes.KH2O < 100000) {
+                global.autoDeal(terminal.room.name, "KH2O", 700, 1000);
                 return;
             }
             if (global.allRes.LH < 100000) {
-                global.autoDeal(terminal.room.name, "LH", 300, 1000);
+                global.autoDeal(terminal.room.name, "LH", 350, 1000);
                 return;
             }
             if (terminal.room.controller.level < 8) return;
