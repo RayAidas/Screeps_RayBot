@@ -193,7 +193,7 @@ export default class Terminal extends Singleton {
                     totalAmount: Math.min(20000, energyThreshold - totalEnergy),
                     roomName: room.name
                 });
-                console.log(colorful('create', 'green'), `energy order in room`, colorful(room.name, 'blue'), `success`);
+                console.log(colorful('create', 'green'), `energy order in room`, colorful(room.name, 'blue'), `success`, `price [${highestPrice - 0.001}]`);
                 
                 return;
             }
