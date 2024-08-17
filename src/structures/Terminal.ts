@@ -168,6 +168,9 @@ export default class Terminal extends Singleton {
         let energyThreshold = 400000; // 定义的能量阈值
         if (highestPrice <= 10) {
             energyThreshold = 600000;
+            if (roomName == 'W55S48') {
+                energyThreshold = 6000000;
+            }
         }
         if (totalEnergy < energyThreshold && energyThreshold - totalEnergy >= 10000) {
             const roomEnergyOrder = Game.market.getOrderById(room.memory.energyOrder);
