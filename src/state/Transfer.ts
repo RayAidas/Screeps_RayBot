@@ -237,9 +237,6 @@ export default class Transfer extends Singleton {
                     break;
                 }
             }
-            if (!target) {
-                App.fsm.changeState(creep, State.TransferToStorage);
-            }
             if (creep.ticksToLive < 20) {
                 if (creep.store.getUsedCapacity() == 0) {
                     creep.suicide();
@@ -251,10 +248,6 @@ export default class Transfer extends Singleton {
             }
             if (creep.store.getUsedCapacity() == 0) {
                 App.fsm.changeState(creep, State.Withdraw);
-                return;
-            }
-            if (!creep.store.energy) {
-                App.fsm.changeState(creep, State.TransferToStorage);
                 return;
             }
             App.common.transferToTargetStructure(creep, target);
