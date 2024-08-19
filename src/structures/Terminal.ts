@@ -191,6 +191,7 @@ export default class Terminal extends Singleton {
                 }
                 // 创建新订单 最多创建20K的订单,价格高于25则不进行创建
                 if (highestPrice > 25) return;
+                if (room.terminal.store.getFreeCapacity() <= 50000) return;
                 Game.market.createOrder({
                     type: ORDER_BUY,
                     resourceType: 'energy',
