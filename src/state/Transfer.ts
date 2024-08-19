@@ -197,7 +197,7 @@ export default class Transfer extends Singleton {
             if (target.store[target.mineralType] == 3000 || creep.store.getUsedCapacity() == 0) {
                 App.fsm.changeState(creep, State.Withdraw);
             }
-        }else App.fsm.changeState(creep, State.TransferToControllerContainer);
+        }else App.fsm.changeState(creep, State.TransferToStorage);
     }
 
     public ToPowerSpawn(creep: Creep) {
@@ -237,27 +237,17 @@ export default class Transfer extends Singleton {
                     break;
                 }
             }
-            if (!target) {
-                App.fsm.changeState(creep, State.TransferToStorage);
-            }
-            if (creep.ticksToLive < 20) {
-                if (creep.store.getUsedCapacity() == 0) {
-                    creep.suicide();
-                    return;
-                } else {
-                    App.fsm.changeState(creep, State.TransferToControllerContainer);
-                    return;
-                }
+            if (creep.ticksToLive < 20 && creep.store.getUsedCapacity() == 0) {
+                creep.suicide();
+                return;
             }
             if (creep.store.getUsedCapacity() == 0) {
                 App.fsm.changeState(creep, State.Withdraw);
                 return;
             }
-            if (!creep.store.energy) {
-                App.fsm.changeState(creep, State.TransferToStorage);
-                return;
+            if (target) {
+                App.common.transferToTargetStructure(creep, target);
             }
-            App.common.transferToTargetStructure(creep, target);
         }
     }
 
