@@ -554,7 +554,7 @@ export default class Withdraw extends Singleton {
                     })
                     if (containers) {
                         let container = containers.sort((a, b) => b.store.energy - a.store.energy)[0];
-                        creep.memory.targetContainer = container.id;
+                        creep.memory.targetContainer = container?.id;
                     } else {
                         this.withdrawRuin(creep);
                         return;
