@@ -237,9 +237,17 @@ export default class Transfer extends Singleton {
                     break;
                 }
             }
-            if (creep.ticksToLive < 20 && creep.store.getUsedCapacity() == 0) {
-                creep.suicide();
-                return;
+            if (creep.ticksToLive <= 10) {
+                if (creep.store.getUsedCapacity() == 0) {
+                    creep.suicide();
+                    return;
+                } else if  (creep.room.terminal) {
+                    App.common.transferToTargetStructure(creep, creep.room.storage);
+                    return;
+                } else {
+                    App.common.transferToTargetStructure(creep, target);
+                    return;
+                }
             }
             if (creep.store.getUsedCapacity() == 0) {
                 App.fsm.changeState(creep, State.Withdraw);
