@@ -654,13 +654,13 @@ export default class Withdraw extends Singleton {
                     this.withdrawRuin(creep);
                     return;
                 }
-                if (storage?.store.energy) {
-                    App.common.getResourceFromTargetStructure(creep, storage);
+                if (terminal?.store.energy) {
+                    App.common.getResourceFromTargetStructure(creep, terminal);
                     if (creep.store.getFreeCapacity() == 0) App.fsm.changeState(creep, State.TransferToControllerContainer);
                     return;
                 }
-                if (terminal?.store.energy) {
-                    App.common.getResourceFromTargetStructure(creep, terminal);
+                if (storage?.store.energy) {
+                    App.common.getResourceFromTargetStructure(creep, storage);
                     if (creep.store.getFreeCapacity() == 0) App.fsm.changeState(creep, State.TransferToControllerContainer);
                     return;
                 }
