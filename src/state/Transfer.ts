@@ -257,7 +257,9 @@ export default class Transfer extends Singleton {
                 App.common.transferToTargetStructure(creep, target);
             } else {
                 // 当controller附近有terminal时目标不存在转为向storage中转运能量
-                App.common.transferToTargetStructure(creep, creep.room.storage);
+                if (creep.room.terminal.store.getFreeCapacity() <= 50000) {
+                    App.common.transferToTargetStructure(creep, creep.room.storage);
+                }
             }
         }
     }
