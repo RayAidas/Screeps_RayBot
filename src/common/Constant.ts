@@ -217,8 +217,8 @@ export const bodyConfigs: BodyConfigs = {
     { [CLAIM]: 1, [MOVE]: 2 },
     { [CLAIM]: 1, [MOVE]: 2 },
     { [CLAIM]: 1, [MOVE]: 2 },
-    { [CLAIM]: 1, [MOVE]: 2 },
-    { [CLAIM]: 1, [MOVE]: 2 },
+    { [CLAIM]: 1, [MOVE]: 6 },
+    { [CLAIM]: 1, [MOVE]: 6 },
   ),
 
   centerTransfer: getBodyConfig(
