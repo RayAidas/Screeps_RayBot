@@ -226,6 +226,11 @@ export default class Init extends Singleton {
         let terminal = room.terminal;
         let energyAcount = (storage ? storage.store.energy : 0) + (terminal ? terminal.store.energy : 0);
         let upgradePlusFlag = Game.flags[`${roomName}_upgradePlus`];
+        // TODO 处理逻辑待优化
+        let transE2SFlag = Game.flags[`${roomName}_transE2S`];
+        if (transE2SFlag) {
+          global.cc[roomName].transfer2Container = 4;
+        }
         if (upgradePlusFlag) {
           if (room.controller.level == 8) {
             upgradePlusFlag.remove();
