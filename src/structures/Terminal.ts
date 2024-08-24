@@ -130,6 +130,7 @@ export default class Terminal extends Singleton {
         // 检查能量存储情况
         let room = Game.rooms[roomName];
         if (!room) return;
+        if (!room.terminal) return;
         if (room.controller.level < 6 && !room.terminal) return;
         // 获取在市场中活跃 (activated) 和非活跃 (deactivated) 的购买能量的订单存到Memory中
         const orders = Game.market.getAllOrders({ resourceType: 'energy', type: ORDER_BUY });
@@ -195,7 +196,7 @@ export default class Terminal extends Singleton {
                 }
                 // 创建新订单 最多创建20K的订单,价格高于25则不进行创建
                 if (highestPrice > 25) return;
-                if (room.terminal.store.getFreeCapacity() <= 50000) return;
+                if (room.terminal?.store.getFreeCapacity() <= 50000) return;
                 Game.market.createOrder({
                     type: ORDER_BUY,
                     resourceType: 'energy',

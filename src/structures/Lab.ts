@@ -121,13 +121,13 @@ export default class Lab extends Singleton {
             let creep = Game.creeps[room.memory.labs.creepName];
             let res0 = creep?.store[res[0]] ?? 0;
             let res1 = creep?.store[res[1]] ?? 0;
-            if (room.terminal.store[res[0]] + room.storage.store[res[0]] + lab1.store[res[0]] + res0 < 3000) {
+            if (room.terminal?.store[res[0]] + room.storage.store[res[0]] + lab1.store[res[0]] + res0 < 3000) {
                 App.logistics.createTask(roomName, res[0], 3000, 'lab');
                 room.memory.labs.fillRes = null;
                 room.memory.labs.fillTargetIndex = null;
                 return
             }
-            if (room.terminal.store[res[1]] + room.storage.store[res[1]] + lab2.store[res[1]] + res1 < 3000) {
+            if (room.terminal?.store[res[1]] + room.storage.store[res[1]] + lab2.store[res[1]] + res1 < 3000) {
                 App.logistics.createTask(roomName, res[1], 3000, 'lab');
                 room.memory.labs.fillRes = null;
                 room.memory.labs.fillTargetIndex = null;
