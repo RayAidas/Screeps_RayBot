@@ -77,6 +77,9 @@ export default class Spawn extends Singleton {
           }, {
             type: global.allRes["XKH2O"] > 1000 ? "XKH2O" : "KH",
             num: Game.creeps[creep.name].getActiveBodyparts(CARRY)
+          }, {
+            type: "ZO",
+            num: Game.creeps[creep.name].getActiveBodyparts(MOVE)
           }])
         }
         if (creep.memory.role == Role.Attacker) {

@@ -124,6 +124,7 @@ export default class Terminal extends Singleton {
      *  对于没有购买能量订单且有terminal的房间，如果房间的能量低于某个阈值则创建订单并维护到内存中。
      *     合理的价格和订单容量，避免出现抬价的情况。 
      */
+    // TODO 当存在其他资源单子的时候会报错，待修复！
     private _autoBuyEnergy(roomName: string): void {
 
         // 检查能量存储情况
