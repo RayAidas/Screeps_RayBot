@@ -162,7 +162,7 @@ export const bodyConfigs: BodyConfigs = {
     { [WORK]: 6, [CARRY]: 1, [MOVE]: 3 },
     { [WORK]: 6, [CARRY]: 1, [MOVE]: 3 },
     { [WORK]: 15, [CARRY]: 1, [MOVE]: 8 },
-    { [WORK]: 20, [CARRY]: 2, [MOVE]: 11 }
+    { [WORK]: 20, [CARRY]: 2, [MOVE]: 18 }
   ),
   carrier: getBodyConfig(
     { [CARRY]: 4, [MOVE]: 2 },
