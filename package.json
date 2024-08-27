@@ -2,20 +2,25 @@
   "dependencies": {
     "@types/lodash": "^3.10.1",
     "@types/screeps": "^3.3.8",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "source-map": "^0.6.1"
   },
   "devDependencies": {
-    "rollup": "^2.78.1",
+    "@rollup/plugin-commonjs": "^26.0.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "rollup": "^2.79.1",
     "rollup-plugin-clear": "^2.0.7",
-    "rollup-plugin-copy": "^3.4.0",
+    "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-screeps": "^1.0.1",
     "rollup-plugin-typescript2": "^0.33.0",
     "typescript": "^4.8.2"
   },
   "scripts": {
+    "build": "rollup -cw",
     "push": "rollup -cw --environment DEST:main",
     "local": "rollup -cw --environment DEST:local",
     "sb": "rollup -cw --environment DEST:sb",
-    "acf": "rollup -cw --environment DEST:acf"
+    "acf": "rollup -cw --environment DEST:acf",
+    "singer": "rollup -cw --environment DEST:SponSinger"
   }
 }

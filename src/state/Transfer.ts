@@ -153,7 +153,7 @@ export default class Transfer extends Singleton {
     public ToTerminal(creep: Creep) {
         let target = creep.room.terminal
         if (target?.my) {
-            if(target.store.getFreeCapacity()==0){
+            if (target.store.getFreeCapacity() == 0) {
                 App.common.transferToTargetStructure(creep, creep.room.storage);
                 return;
             }
@@ -186,7 +186,7 @@ export default class Transfer extends Singleton {
                 }
             }
         }
-        if(target instanceof StructureLab){
+        if (target instanceof StructureLab) {
             App.common.transferToTargetStructure(creep, target);
             if ((creep.store.energy && target.store.energy == 2000) ||
                 creep.store.getUsedCapacity() == 0) {
@@ -197,7 +197,7 @@ export default class Transfer extends Singleton {
             if (target.store[target.mineralType] == 3000 || creep.store.getUsedCapacity() == 0) {
                 App.fsm.changeState(creep, State.Withdraw);
             }
-        }else App.fsm.changeState(creep, State.TransferToStorage);
+        } else App.fsm.changeState(creep, State.TransferToStorage);
     }
 
     public ToPowerSpawn(creep: Creep) {
@@ -220,4 +220,99 @@ export default class Transfer extends Singleton {
         }
         App.common.transferToTargetStructure(creep, target);
     }
+
+    /**
+     * 冲级模式下负责向controller附近的container转运energy
+     * @param creep 冲级模式专用
+     * @returns 
+     */
+    public ToControllerContainer(creep: Creep) {
+        if (creep.room.memory.controllerContainerId) {
+            let controllerContainers: Id<StructureContainer>[] = creep.room.memory.controllerContainerId;
+            let target: StructureContainer;
+            for (let id of controllerContainers) {
+                let container = Game.getObjectById(id);
+                if (container.store.getFreeCapacity(RESOURCE_ENERGY) >= 500) {
+                    target = container;
+                    break;
+                }
+            }
+            if (creep.ticksToLive <= 10) {
+                if (creep.store.getUsedCapacity() == 0) {
+                    creep.suicide();
+                    return;
+                } else if (creep.room.terminal) {
+                    App.common.transferToTargetStructure(creep, creep.room.storage);
+                    return;
+                } else {
+                    App.common.transferToTargetStructure(creep, target);
+                    return;
+                }
+            }
+            if (creep.store.getUsedCapacity() == 0) {
+                App.fsm.changeState(creep, State.Withdraw);
+                return;
+            }
+            if (target) {
+                App.common.transferToTargetStructure(creep, target);
+            } else {
+                // 当controller附近有terminal时目标不存在转为向storage中转运能量
+                if (creep.room.terminal?.store.getFreeCapacity() <= 50000) {
+                    App.common.transferToTargetStructure(creep, creep.room.storage);
+                }
+                let transE2SFlag = Game.flags[`${creep.room.name}_transE2S`];
+                if (transE2SFlag) {
+                    App.common.transferToTargetStructure(creep, creep.room.storage);
+                }
+            }
+        }
+    }
+
+    /**
+     *   向核弹填充能量和G,判断当前房间是否需要填充能量或者G如果不需要则直接return,
+     * 先进行填充能量，能量填充完毕之后再填充G
+     * @param creep 
+     */
+    public ToNuker(creep: Creep) {
+        if (creep.room.controller.level < 8) return;
+        // 获取核弹发射器对象
+        let nuker = Game.getObjectById(creep.room.memory.nuker) as StructureNuker;
+        if (!nuker) {
+            App.fsm.changeState(creep, State.Withdraw);
+            return;
+        }
+
+        // 检查核弹发射器是否需要能量
+        if (nuker.store.energy < nuker.store.getCapacity(RESOURCE_ENERGY)) {
+            if (creep.store.getUsedCapacity() === 0) {
+                App.common.getResourceFromTargetStructure(creep, creep.room.storage, RESOURCE_ENERGY);
+                return;
+            }
+            // 转移能量到核弹发射器
+            App.common.transferToTargetStructure(creep, nuker, RESOURCE_ENERGY);
+            return;
+        }
+
+        // 检查核弹发射器是否需要Ghodium
+        if (nuker.store[RESOURCE_GHODIUM] < nuker.store.getCapacity(RESOURCE_GHODIUM) && global.allRes.G >= 5000) {
+            if (!creep.store.getCapacity(RESOURCE_GHODIUM) && creep.store.getFreeCapacity(RESOURCE_GHODIUM) == 0) {
+                App.common.transferToTargetStructure(creep, creep.room.storage);
+                return;
+            } else if (creep.store.getUsedCapacity(RESOURCE_GHODIUM) == 0) {
+                App.common.getResourceFromTargetStructure(creep, creep.room.storage, RESOURCE_GHODIUM);
+                return;
+            } else {
+                // 转移Ghodium到核弹
+                App.common.transferToTargetStructure(creep, nuker);
+                return;
+            }
+        } else {
+            global.autoDeal(creep.room.name, "G", 500, 2000)
+        }
+
+        // 如果核弹发射器的能量和Ghodium都充足，转换creep到其他状态
+        App.fsm.changeState(creep, State.Withdraw);
+    }
+
+
 }

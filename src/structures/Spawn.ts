@@ -61,36 +61,88 @@ export default class Spawn extends Singleton {
         let spawningCreep = spawn.spawning?.name;
         let creep = Game.creeps[spawningCreep];
         if (creep.memory.role == Role.Repairer || creep.memory.role == Role.HelpBuilder) {
+          // TODO 增加三种不同等级数量判断
           Boost.SetBoostType(creep.name, [{
-            type: global.allRes["LH2O"] > 10000 ? "LH2O" : "LH",
+            type: global.allRes["XLH2O"] > 1000 ? "LH2O" : "LH",
             num: Game.creeps[creep.name].getActiveBodyparts(WORK)
           }, {
-            type: global.allRes["KH2O"] > 10000 ? "KH2O" : "KH",
+            type: global.allRes["XKH2O"] > 1000 ? "KH2O" : "KH",
             num: Game.creeps[creep.name].getActiveBodyparts(CARRY)
           }])
         }
         if (creep.memory.role == Role.HelpUpgrader) {
           Boost.SetBoostType(creep.name, [{
-            type: global.allRes["GH2O"] > 10000 ? "GH2O" : "GH",
+            type: global.allRes["XGH2O"] > 1000 ? "XGH2O" : "GH",
             num: Game.creeps[creep.name].getActiveBodyparts(WORK)
           }, {
-            type: global.allRes["KH2O"] > 10000 ? "KH2O" : "KH",
+            type: global.allRes["XKH2O"] > 1000 ? "XKH2O" : "KH",
             num: Game.creeps[creep.name].getActiveBodyparts(CARRY)
+          }, {
+            type: "ZO",
+            num: Game.creeps[creep.name].getActiveBodyparts(MOVE)
           }])
         }
-        // if (creep.memory.role == Role.Upgrader && creep.room.controller.level == 7 && global.allRes["XGH2O"] >= 10000) {
-        //   Boost.SetBoostType(creep.name, [{
-        //     type: "XGH2O",
-        //     num: Game.creeps[creep.name].getActiveBodyparts(WORK)
-        //   }])
-        // }
-        if (creep.memory.role == Role.Upgrader && creep.room.controller.level == 7 && global.allRes["GH"] >= 10000) {
+        if (creep.memory.role == Role.Attacker) {
           Boost.SetBoostType(creep.name, [{
-            type: "GH",
-            num: Game.creeps[creep.name].getActiveBodyparts(WORK)
+            type: global.allRes["XUH2O"] > 500 ? "XUH2O" : "UH2O",
+            num: Game.creeps[creep.name].getActiveBodyparts(ATTACK)
           }])
+        }
+        /**
+         * 升级boost
+         * WORK:
+         *    T1: GH +50% upgradeController 效率但不增加其能量消耗
+         *    T2: GH2O +80% upgradeController 效率但不增加其能量消耗
+         *    T3: XGH2O +100% upgradeController 效率但不增加其能量消耗
+         * CARRY:
+         *    T1: KH +50 容量
+         *    T2: KH2O 	+100 容量
+         *    T3: XKH2O +150 容量
+         */
+        let upgradePlusFlag = Game.flags[`${creep.memory.roomFrom}_upgradePlus`];
+        let upgraderBoostFlag = Game.flags[`${creep.memory.roomFrom}_upgraderBoost`];
+        if (upgradePlusFlag || upgraderBoostFlag) {
+          if (creep.memory.role == Role.Upgrader && creep.room.controller.level >= 6) {
+            // 强化WORK部件
+            if (global.allRes["XGH2O"] > 1000) {
+              this._setBoostType(creep, "XGH2O", WORK);
+            } else if (global.allRes["GH2O"] > 1000 || global.allRes["GH"] > 1000) {
+              this._setBoostType(creep, global.allRes["GH2O"] > 1000 ? "GH2O" : "GH", WORK);
+            } else {
+              console.log(`XGH2O资源不足,自动购入`);
+              global.autoDeal(creep.room.name, "XGH2O", 1940, 2000);
+            }
+            // 强化CARRY部件
+            if (upgradePlusFlag) {
+              if (global.allRes["XKH2O"] > 1000) {
+                this._setBoostType(creep, "XKH2O", CARRY);
+              } else if (global.allRes["KH2O"] > 1000 || global.allRes["KH"] > 1000) {
+                this._setBoostType(creep, global.allRes["KH2O"] > 1000 ? "KH2O" : "KH", CARRY);
+              }
+            }
+          }
+          if (creep.memory.role == Role.Transfer2Container && upgradePlusFlag) {
+            if (global.allRes["XKH2O"] > 1000) {
+              this._setBoostType(creep, "XKH2O", CARRY);
+            } else if (global.allRes["KH2O"] > 1000 || global.allRes["KH"] > 1000) {
+              this._setBoostType(creep, global.allRes["KH2O"] > 1000 ? "KH2O" : "KH", CARRY);
+            }
+          }
         }
       }
     }
+  }
+  /**
+   * 
+   * @param creep 需要强化的Creep
+   * @param compoundType 化合物类型
+   * @param boostBodyType 强化部件
+   */
+  private _setBoostType(creep: Creep, compoundType: MineralBoostConstant, boostBodyPartType: BodyPartConstant): void {
+    const boostBodyPartAmount = Game.creeps[creep.name].getActiveBodyparts(boostBodyPartType);
+    Boost.SetBoostType(creep.name, [{
+      type: compoundType,
+      num: boostBodyPartAmount
+    }]);
   }
 }

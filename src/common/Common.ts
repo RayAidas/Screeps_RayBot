@@ -11,7 +11,7 @@ export default class Common extends Singleton {
         this.findLabs(roomName);
         this.findPowerSpawn(roomName);
         // App.common.findLinkByRoom(Game.rooms[rooms[i]]);
-        // App.common.findNuker(Game.rooms[rooms[i]]);
+        App.common.findNuker(roomName);
         // App.common.findObserver(Game.rooms[rooms[i]]);
     }
     public getPosNear(pos: RoomPosition, sourceState: boolean = false) {
@@ -107,6 +107,26 @@ export default class Common extends Singleton {
             let keyArr = Object.keys(res).sort((a, b) => res[b] - res[a]);
             let arr = keyArr[0].split('-');
             room.memory.controllerLinkPos = new RoomPosition(+arr[0], +arr[1], roomName);
+        }
+    }
+
+    public getcontrollerContainerId(roomName: string): void {
+        let room = Game.rooms[roomName];
+        let controllerContainers: StructureContainer[] = [];
+        controllerContainers = room.controller.pos.findInRange(FIND_STRUCTURES, 5, {
+            filter: (stru) => {
+                return stru.structureType == 'container'
+            }
+        }) as StructureContainer[];
+        if (controllerContainers.length > 0) {
+            room.memory.controllerContainerId ??= [];
+            let controllerContainerIdList = [];
+            for (let container of controllerContainers) {
+                controllerContainerIdList.push(container.id);
+            }
+            room.memory.controllerContainerId = controllerContainerIdList;
+        } else {
+            room.memory.controllerContainerId = [];
         }
     }
 
@@ -326,6 +346,19 @@ export default class Common extends Singleton {
             }
         })
         room.memory.powerSpawnId = powerSpawn;
+    }
+
+    public findNuker(roomName: string) {
+        let room = Game.rooms[roomName];
+        if (Game.getObjectById(room.memory.nuker)) return;
+        let nuker: Id<StructureNuker> = null;
+        room.find(FIND_STRUCTURES, {
+            filter: (structure) => {
+                if (structure.structureType == STRUCTURE_NUKER)
+                nuker = structure.id;
+            }
+        })
+        room.memory.nuker = nuker;
     }
 
     public getSources(roomName: string) {

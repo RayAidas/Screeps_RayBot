@@ -23,7 +23,7 @@ export default class Boost extends Singleton {
         if (!Memory.boostList[roomName]) Memory.boostList[roomName] = {};
         if (!Memory.boostList[roomName][creep.name]) {
             Memory.boostList[roomName][creep.name] = types;
-            App.fsm.changeState(creep, State.Boost);
+            // App.fsm.changeState(creep, State.Boost);
             console.log(JSON.stringify(types));
         }
         for (let name in Memory.boostList[roomName]) {
@@ -32,6 +32,7 @@ export default class Boost extends Singleton {
     }
 
     public run(creep: Creep) {
+        // console.log(`当前房间为[${creep.room.name}] 正在boost creep[${creep.name}]`);
         let room = creep.room;
         let target = Game.getObjectById(room.memory.labs[0]);
         if (target) {

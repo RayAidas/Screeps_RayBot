@@ -18,11 +18,13 @@ const bodys = {
 	'B-W': { [WORK]: 40, [MOVE]: 10 },
 	'RA': { [RANGED_ATTACK]: 10, [MOVE]: 10 },
 	'W': { [WORK]: 25, [MOVE]: 25 },
+	'B-W-40': { [WORK]: 40, [MOVE]: 10 },
 	'A': { [ATTACK]: 10, [MOVE]: 10 },
-	'C': { [CLAIM]: 10, [MOVE]: 10 },
+	'C': { [CLAIM]: 19, [MOVE]: 24 },
 	'R': { [CLAIM]: 4, [MOVE]: 4 },
 	"TEST": { [ATTACK]: 1, [MOVE]: 1 },
 	"B-TEST": { [ATTACK]: 1, [MOVE]: 1 },
+	"B-W-TEST":  { [WORK]: 1, [MOVE]: 1 },
 }
 
 const BoostType: {
@@ -129,7 +131,7 @@ export default class Solitary extends Singleton {
 						type: MineralBoostConstant;
 						num: number;
 					}[] = [];
-					console.log(JSON.stringify(types))
+					// console.log(JSON.stringify(types))
 					for (let body in bodys[s.type]) {
 						types.push({
 							type: BoostType[body],
@@ -219,6 +221,8 @@ export default class Solitary extends Singleton {
 
 		let flag = Game.flags[`atk_${creep.room.name}`];
 		let flag2 = Game.flags[`mass_${creep.room.name}`];
+		// TODO 增加ignoreStructor逻辑
+		let ignoreStructor = Game.flags[`ignore_${creep.room.name}`];
 		let target: Structure = null;
 		if (flag2) {
 			creep.rangedMassAttack();
@@ -244,7 +248,7 @@ export default class Solitary extends Singleton {
 				});
 				if (target) {
 					if (creep.rangedAttack(target) == ERR_NOT_IN_RANGE) {
-						creep.customMove(target.pos, 3, false);
+						creep.customMove(target.pos, 1, false);
 					}
 				}
 			}
@@ -323,8 +327,11 @@ export default class Solitary extends Singleton {
 			}
 		} else if (Memory.S[id].type == 'C') {
 			if (controller.owner) {
-				if (creep.attackController(controller) == ERR_NOT_IN_RANGE) {
+				let res = creep.attackController(controller);
+				if (res == ERR_NOT_IN_RANGE) {
 					creep.customMove(controller.pos)
+				} else if (res == OK) {
+					creep.suicide();
 				}
 			} else {
 				delete Memory.S[id]

@@ -2,6 +2,9 @@ import clear from 'rollup-plugin-clear';
 import screeps from 'rollup-plugin-screeps';
 import copy from 'rollup-plugin-copy';
 import typescript from 'rollup-plugin-typescript2';
+import resolve from '@rollup/plugin-node-resolve'
+import commonjs from '@rollup/plugin-commonjs'
+import fs from 'node:fs'
 
 let config
 // 根据指定的目标获取对应的配置项
@@ -45,17 +48,18 @@ export default {
     output: {
         file: 'dist/main.js',
         format: 'cjs',
-        sourcemap: false
+        sourcemap: true
     },
     plugins: [
         // 清除上次编译成果
         clear({ targets: ["dist"] }),
         // 打包依赖
-        // resolve(),
+        resolve(),
         // 模块化依赖
-        // commonjs(),
+        commonjs(),
         // 编译 ts
         typescript({ tsconfig: "./tsconfig.json" }),
+        sourcemapToJs(),
         copy({
             targets: [
                 {
@@ -72,3 +76,18 @@ export default {
         pluginDeploy
     ],
 };
+
+
+/**@type {() => import("rollup").Plugin} */
+function sourcemapToJs() {
+    return {
+      writeBundle(options) {
+        if (options.sourcemap && options.file) {
+          const str = fs.readFileSync(`${options.file}.map`, {
+            encoding: "utf-8",
+          });
+          fs.writeFileSync(`${options.file}.map`, `module.exports = ${str}`);
+        }
+      },
+    };
+  }

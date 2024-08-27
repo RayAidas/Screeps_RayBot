@@ -3,6 +3,9 @@ import { Role, RoleNum } from "./common/Constant";
 import { colorful, colorHex, getColor } from "./common/utils";
 import Singleton from "./Singleton";
 import { Glb } from "./indexManager";
+import { TalkAll } from "./state/creepChat.js"
+import { State } from "@/fsm/state";
+import { remove } from "lodash";
 
 
 export default class Init extends Singleton {
@@ -14,14 +17,15 @@ export default class Init extends Singleton {
   }
 
   public runInLoop() {
+    // try {
+    TalkAll.run();
     if (Game.shard.name == "shard3" && Game.cpu.bucket < 100) return;
     if (Game.shard.name == "shard3") {
       // 默认关闭
       if (Memory.generatePixel) {
         if (Game.cpu.bucket == 10000) Game.cpu.generatePixel();
       }
-    }
-    else {
+    } else {
       // 默认开启
       if (Memory.generatePixel == void 0 || Memory.generatePixel) {
         if (Game.cpu.bucket == 10000) Game.cpu.generatePixel();
@@ -50,10 +54,36 @@ export default class Init extends Singleton {
         }
       }
     }
+    this._boost();
     this._runCreeps();
     let used = Game.cpu.getUsed();
     for (let i = 0; i < this.rooms.length; i++) {
       this._showRoomInfo(this.rooms[i], used);
+    }
+
+    // } catch (error) {
+    //   console.log(error);
+    // }
+  }
+
+  private _boost() {
+    // 遍历boostList列表，取出每个房间第一个需要boost的creep去执行boost
+    let roomName: string;
+    for (roomName in Memory.boostList) {
+      // 判断每个房间boost列表是否为空
+      if (Memory.boostList[roomName]) {
+        let creepNames = Object.keys(Memory.boostList[roomName]);
+        // 需要boost的creep进行等待，最多等待100tick
+        let creepName: string;
+        for (creepName of creepNames) {
+          App.fsm.changeState(Game.creeps[creepName], State.Boost);
+        }
+        if (creepNames[0]) {
+          let boostCreep = Game.creeps[creepNames[0]];
+          // App.fsm.changeState(boostCreep, State.Boost);
+          App.boost.run(boostCreep);
+        }
+      }
     }
   }
 
@@ -66,6 +96,7 @@ export default class Init extends Singleton {
       App.common.getSources(rooms[i]);
       App.common.getMineral(rooms[i]);
       App.common.getStructrues(rooms[i]);
+      App.common.getcontrollerContainerId(rooms[i]);
       if (!Memory.boostList[rooms[i]]) Memory.boostList[rooms[i]] = {}
     }
     if (!Memory.pcConfig) {
@@ -194,6 +225,16 @@ export default class Init extends Singleton {
         let storage = room.storage;
         let terminal = room.terminal;
         let energyAcount = (storage ? storage.store.energy : 0) + (terminal ? terminal.store.energy : 0);
+        let upgradePlusFlag = Game.flags[`${roomName}_upgradePlus`];
+        if (upgradePlusFlag) {
+          if (room.controller.level == 8) {
+            upgradePlusFlag.remove();
+            let upgraderBoostFlag = Game.flags[`${roomName}_upgraderBoost`];
+            if (upgraderBoostFlag) {
+              upgraderBoostFlag.remove();
+            }
+          }
+        }
         if (energyAcount > 200000) {
           if (energyAcount > 500000 && room.controller.level < 8) {
             global.cc[roomName].builder = RoleNum[room.controller.level][Role.Builder];
@@ -205,11 +246,22 @@ export default class Init extends Singleton {
             else if (room.controller.level == 8) global.cc[roomName].upgrader = 0;
             else global.cc[roomName].upgrader = 1;
           }
-        }
-        else {
+          // 增加冲级模式，判断房间内有无upgradePlus旗帜
+          if (upgradePlusFlag) {
+            global.cc[roomName].upgrader = 10;
+            global.cc[roomName].transfer2Container = 2;
+            global.cc[roomName].filler = 3;
+          } else {
+            global.cc[roomName].transfer2Container = 0;
+          }
+        } else if (upgradePlusFlag) {
+          global.cc[roomName].upgrader = 10;
+          global.cc[roomName].transfer2Container = 2;
+          global.cc[roomName].filler = 3;
+        } else {
           global.cc[roomName].builder = 0;
           global.cc[roomName].upgrader = 0;
-          if (room.controller.ticksToDowngrade < 100000 || room.controller.level < 8) global.cc[roomName].upgrader = 1;
+          if (room.controller.ticksToDowngrade < 100000 || room.controller.level < 8) global.cc[roomName].upgrader = 3;
         }
       } else {
         if (global.cc[roomName]) {
@@ -218,6 +270,12 @@ export default class Init extends Singleton {
         } else {
           this._globalMount();
         }
+      }
+
+      // TODO 处理逻辑待优化
+      let transE2SFlag = Game.flags[`${roomName}_transE2S`];
+      if (transE2SFlag) {
+        global.cc[roomName].transfer2Container = 4;
       }
 
       for (let role in roomCreeps) {
@@ -279,12 +337,12 @@ export default class Init extends Singleton {
   private _runCreeps() {
     for (let name in Game.creeps) {
       let creep = Game.creeps[name];
-      try {
-        if (creep.hits < creep.hitsMax && creep.room.memory.towers?.length) global.towerTask[creep.room.name].injured.push(creep.id);
-        App.fsm.update(creep)
-      } catch (error) {
-        console.log('Error:', creep.memory.roomFrom, '-', creep.memory.role, ':', error);
-      }
+      // try {
+      if (creep.hits < creep.hitsMax && creep.room.memory.towers?.length) global.towerTask[creep.room.name].injured.push(creep.id);
+      App.fsm.update(creep)
+      // } catch (error) {
+      //   console.log('Error:', creep.memory.roomFrom, '-', creep.memory.role, ':', error);
+      // }
     }
   }
 
@@ -316,21 +374,22 @@ export default class Init extends Singleton {
 
   private _runStructures() {
     for (let i = 0; i < this.rooms.length; i++) {
-      try {
-        App.energySource.run(this.rooms[i]);
-        App.powerSpawn.run(this.rooms[i]);
-        App.mineral.run(this.rooms[i]);
-        App.tower.run(this.rooms[i]);
-        App.link.run(this.rooms[i]);
-        App.lab.run(this.rooms[i]);
-        App.common.getControllerLink(this.rooms[i]);
-        App.factory.run(this.rooms[i]);
-        App.terminal.run(this.rooms[i]);
-        App.spawn.update(this.rooms[i]);
-        App.pc.run(this.rooms[i]);
-      } catch (error) {
-        console.log(this.rooms[i], error)
-      }
+      // try {
+      App.energySource.run(this.rooms[i]);
+      App.powerSpawn.run(this.rooms[i]);
+      App.mineral.run(this.rooms[i]);
+      App.tower.run(this.rooms[i]);
+      App.link.run(this.rooms[i]);
+      App.lab.run(this.rooms[i]);
+      App.common.getControllerLink(this.rooms[i]);
+      App.common.getcontrollerContainerId(this.rooms[i]);
+      App.factory.run(this.rooms[i]);
+      App.terminal.run(this.rooms[i]);
+      App.spawn.update(this.rooms[i]);
+      App.pc.run(this.rooms[i]);
+      // } catch (error) {
+      //   console.log(this.rooms[i], error)
+      // }
     }
   }
 
@@ -359,6 +418,21 @@ export default class Init extends Singleton {
       }
     }
 
+    /**
+    * 清除所有的订单
+    */
+    let clearOrder = Game.flags[`clearOrder`];
+    if (clearOrder) {
+      for (let j in Game.market.orders) {
+        let order = Game.market.getOrderById(j);
+        let res = Game.market.cancelOrder(j);
+        console.log(`当前订单 ${order} 取消成功`)
+      }
+      // 移除旗子
+      console.log(`当前时间 ${Game.time} 订单清理完毕,移除旗子`);
+      clearOrder.remove();
+    }
+
     let flag0 = Game.flags['lab0'];
     let flag1 = Game.flags['lab1'];
     let flag2 = Game.flags['lab2'];
@@ -372,11 +446,11 @@ export default class Init extends Singleton {
     let S = Memory.S;
     if (S) {
       for (let id in S) {
-        try {
-          App.solitary.run(Number(id))
-        } catch (error) {
-          console.log(error);
-        }
+        // try {
+        App.solitary.run(Number(id))
+        // } catch (error) {
+        //   console.log(error);
+        // }
       }
     }
   }
