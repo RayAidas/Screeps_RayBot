@@ -284,7 +284,7 @@ export default class Withdraw extends Singleton {
                         // App.fsm.changeState(creep, State.TransferToStorage);
                         if (storage.store.getFreeCapacity() < creep.store.getUsedCapacity()) {
                             App.fsm.changeState(creep, State.TransferToTerminal);
-                            return
+                            return;
                         }
                         if (App.common.getDis(creep.pos, storage.pos) == 1) {
                             let res = Object.keys(creep.store).sort((a, b) => creep.store[b] - creep.store[a]) as ResourceConstant[];
@@ -295,6 +295,11 @@ export default class Withdraw extends Singleton {
                     if (creep.store.getFreeCapacity() > 0) {
                         App.common.getResourceFromTargetStructure(creep, centerLink);
                     }
+                    return;
+                }
+                creep.memory.test = 7.5;
+                if (creep.room.memory.nuker) {
+                    App.fsm.changeState(creep, State.TransferToNuker);
                     return;
                 }
                 creep.memory.test = 8;

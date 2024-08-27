@@ -11,7 +11,7 @@ export default class Common extends Singleton {
         this.findLabs(roomName);
         this.findPowerSpawn(roomName);
         // App.common.findLinkByRoom(Game.rooms[rooms[i]]);
-        // App.common.findNuker(Game.rooms[rooms[i]]);
+        App.common.findNuker(roomName);
         // App.common.findObserver(Game.rooms[rooms[i]]);
     }
     public getPosNear(pos: RoomPosition, sourceState: boolean = false) {

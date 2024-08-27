@@ -268,5 +268,53 @@ export default class Transfer extends Singleton {
         }
     }
 
+    /**
+     *   向核弹填充能量和G,判断当前房间是否需要填充能量或者G如果不需要则直接return,
+     * 先进行填充能量，能量填充完毕之后再填充G
+     * @param creep 
+     */
+    public ToNuker(creep: Creep) {
+        if (creep.room.controller.level < 8) return;
+        console.log(`ToNuker creep[${creep.name}], global.allRes = [${global.allRes}]`);
+        // 获取核弹发射器对象
+        let nuker = Game.getObjectById(creep.room.memory.nuker) as StructureNuker;
+        if (!nuker) {
+            App.fsm.changeState(creep, State.Withdraw);
+            return;
+        }
+
+        // 检查核弹发射器是否需要能量
+        if (nuker.store.energy < nuker.store.getCapacity(RESOURCE_ENERGY)) {
+            if (creep.store.getUsedCapacity() === 0) {
+                // 如果creep没有其他资源，转换状态为撤退或者其他状态
+                App.common.getResourceFromTargetStructure(creep, creep.room.storage, RESOURCE_ENERGY);
+                return;
+            }
+            // 转移能量到核弹发射器
+            App.common.transferToTargetStructure(creep, nuker, RESOURCE_ENERGY);
+            return;
+        }
+
+        // 检查核弹发射器是否需要Ghodium
+        if (nuker.store[RESOURCE_GHODIUM] < nuker.store.getCapacity(RESOURCE_GHODIUM) && global.allRes.G >= 5000) {
+            let needGhodiumQuantity = nuker.store.getCapacity(RESOURCE_GHODIUM) - nuker.store.getUsedCapacity(RESOURCE_GHODIUM);
+            console.log(`当前房间[${creep.room.name}],nuker 需要G [${needGhodiumQuantity}]`);
+            if (creep.store.ghodium_melt == 0 && creep.store.getFreeCapacity() == 0) {
+                App.common.transferToTargetStructure(creep, creep.room.storage);
+                return;
+            } else if (creep.store.getCapacity(RESOURCE_GHODIUM) == 0) {
+                App.common.getResourceFromTargetStructure(creep, creep.room.terminal, RESOURCE_GHODIUM);
+            } else {
+                // 转移Ghodium到核弹
+                App.common.transferToTargetStructure(creep, nuker);
+            }
+        } else {
+            global.autoDeal(creep.room.name, "G", 500, 2000)
+        }
+
+        // 如果核弹发射器的能量和Ghodium都充足，转换creep到其他状态
+        App.fsm.changeState(creep, State.Withdraw);
+    }
+
 
 }
