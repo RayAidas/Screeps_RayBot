@@ -299,8 +299,12 @@ export default class Withdraw extends Singleton {
                 }
                 creep.memory.test = 7.5;
                 if (creep.room.memory.nuker) {
-                    App.fsm.changeState(creep, State.TransferToNuker);
-                    return;
+                    let nuker = Game.getObjectById(creep.room.memory.nuker);
+                    if (nuker.store[RESOURCE_GHODIUM] < nuker.store.getCapacity(RESOURCE_GHODIUM) ||
+                        nuker.store.energy < nuker.store.getCapacity(RESOURCE_ENERGY)) {
+                        App.fsm.changeState(creep, State.TransferToNuker);
+                        return;
+                    }
                 }
                 creep.memory.test = 8;
                 // factory
@@ -526,7 +530,7 @@ export default class Withdraw extends Singleton {
                         if (creep.store.getUsedCapacity() == 0) {
                             creep.suicide();
                             return;
-                        } else if  (creep.room.terminal) {
+                        } else if (creep.room.terminal) {
                             App.common.transferToTargetStructure(creep, creep.room.terminal);
                             return;
                         } else {
