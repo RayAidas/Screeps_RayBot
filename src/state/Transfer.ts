@@ -294,7 +294,8 @@ export default class Transfer extends Singleton {
         }
         // 检查核弹发射器是否需要Ghodium
         let roomGhodiumCount = creep.room.storage.store[RESOURCE_GHODIUM] + creep.room.terminal.store[RESOURCE_GHODIUM];
-        if (nuker.store[RESOURCE_GHODIUM] < nuker.store.getCapacity(RESOURCE_GHODIUM) && roomGhodiumCount >= 5000) {
+        let needGhodiumQuantity = nuker.store.getCapacity(RESOURCE_GHODIUM) - nuker.store.getUsedCapacity(RESOURCE_GHODIUM);
+        if (nuker.store[RESOURCE_GHODIUM] < nuker.store.getCapacity(RESOURCE_GHODIUM) && roomGhodiumCount >= needGhodiumQuantity) {
             if (!creep.store.getCapacity(RESOURCE_GHODIUM) && creep.store.getFreeCapacity(RESOURCE_GHODIUM) == 0) {
                 App.common.transferToTargetStructure(creep, creep.room.storage);
                 return;
