@@ -2,7 +2,7 @@ import Singleton from "@/Singleton";
 import { colorful } from "./utils";
 
 export default class Logistics extends Singleton {
-	public createTask(roomName: string, res: ResourceConstant, num: number, type: "lab" | "factory" | 'power') {
+	public createTask(roomName: string, res: ResourceConstant, num: number, type: "lab" | "factory" | 'power' | 'nuker') {
 		if (!Game.rooms[roomName].terminal?.my) return;
 		let taskName = `${roomName}-${res}`;
 		if (!global.demand) global.demand = {};
