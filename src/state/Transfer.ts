@@ -299,11 +299,15 @@ export default class Transfer extends Singleton {
                 App.common.transferToTargetStructure(creep, creep.room.storage);
                 return;
             } else if (creep.store.getUsedCapacity(RESOURCE_GHODIUM) == 0) {
-                App.common.getResourceFromTargetStructure(creep, creep.room.storage, RESOURCE_GHODIUM);
+                if (creep.room.storage.store[RESOURCE_GHODIUM] > 0) {
+                    App.common.getResourceFromTargetStructure(creep, creep.room.storage, RESOURCE_GHODIUM);
+                } else {
+                    App.common.getResourceFromTargetStructure(creep, creep.room.terminal, RESOURCE_GHODIUM);
+                }
                 return;
             } else {
                 // 转移Ghodium到核弹
-                App.common.transferToTargetStructure(creep, nuker);
+                App.common.transferToTargetStructure(creep, nuker, RESOURCE_GHODIUM);
                 return;
             }
         } else {
