@@ -100,7 +100,7 @@ export const RoleNum: {
   },
   3: {
     [Role.Builder]: 4,
-    [Role.Upgrader]: 4
+    [Role.Upgrader]: 10
   },
   4: {
     [Role.Builder]: 1,
@@ -162,7 +162,7 @@ export const bodyConfigs: BodyConfigs = {
     { [WORK]: 6, [CARRY]: 1, [MOVE]: 3 },
     { [WORK]: 6, [CARRY]: 1, [MOVE]: 3 },
     { [WORK]: 15, [CARRY]: 1, [MOVE]: 8 },
-    { [WORK]: 20, [CARRY]: 2, [MOVE]: 11 }
+    { [WORK]: 20, [CARRY]: 2, [MOVE]: 18 }
   ),
   carrier: getBodyConfig(
     { [CARRY]: 4, [MOVE]: 2 },
@@ -192,8 +192,8 @@ export const bodyConfigs: BodyConfigs = {
     { [WORK]: 1, [CARRY]: 1, [MOVE]: 1 },
     { [WORK]: 2, [CARRY]: 2, [MOVE]: 2 },
     { [WORK]: 3, [CARRY]: 3, [MOVE]: 3 },
-    { [WORK]: 4, [CARRY]: 8, [MOVE]: 6 },
-    { [WORK]: 6, [CARRY]: 10, [MOVE]: 8 },
+    { [WORK]: 6, [CARRY]: 8, [MOVE]: 6 },
+    { [WORK]: 9, [CARRY]: 10, [MOVE]: 8 },
     { [WORK]: 8, [CARRY]: 12, [MOVE]: 10 },
     { [WORK]: 20, [CARRY]: 10, [MOVE]: 20 },
     { [WORK]: 15, [CARRY]: 3, [MOVE]: 15 }
@@ -217,15 +217,15 @@ export const bodyConfigs: BodyConfigs = {
     { [CLAIM]: 1, [MOVE]: 2 },
     { [CLAIM]: 1, [MOVE]: 2 },
     { [CLAIM]: 1, [MOVE]: 2 },
-    { [CLAIM]: 1, [MOVE]: 2 },
-    { [CLAIM]: 1, [MOVE]: 2 },
+    { [CLAIM]: 1, [MOVE]: 6 },
+    { [CLAIM]: 1, [MOVE]: 6 },
   ),
 
   centerTransfer: getBodyConfig(
     { [CARRY]: 4, [MOVE]: 4 },
     { [CARRY]: 8, [MOVE]: 8 },
-    { [CARRY]: 20, [MOVE]: 10 },
-    { [CARRY]: 20, [MOVE]: 10 },
+    { [CARRY]: 10, [MOVE]: 5 },
+    { [CARRY]: 15, [MOVE]: 10 },
     { [CARRY]: 20, [MOVE]: 10 },
     { [CARRY]: 20, [MOVE]: 10 },
     { [CARRY]: 30, [MOVE]: 15 },
@@ -423,8 +423,8 @@ export const bodyConfigs: BodyConfigs = {
     { [CARRY]: 3, [MOVE]: 2 },
     { [CARRY]: 4, [MOVE]: 2 },
     { [CARRY]: 5, [MOVE]: 3 },
-    { [CARRY]: 6, [MOVE]: 3 },
-    { [CARRY]: 10, [MOVE]: 5 },
+    { [CARRY]: 20, [MOVE]: 10 },
+    { [CARRY]: 25, [MOVE]: 15 },
     { [CARRY]: 30, [MOVE]: 20 },
     { [CARRY]: 30, [MOVE]: 20 }
   )

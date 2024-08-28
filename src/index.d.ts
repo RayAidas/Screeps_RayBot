@@ -23,7 +23,7 @@ interface GlobalExtension {
 			res: ResourceConstant,
 			num: number,
 			taskRoom: string,
-			type: 'lab' | 'factory' | 'power'
+			type: 'lab' | 'factory' | 'power' | 'nuker'
 		}
 	},
 	observer: {

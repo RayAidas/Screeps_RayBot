@@ -153,7 +153,7 @@ export default class Transfer extends Singleton {
     public ToTerminal(creep: Creep) {
         let target = creep.room.terminal
         if (target?.my) {
-            if(target.store.getFreeCapacity()==0){
+            if (target.store.getFreeCapacity() == 0) {
                 App.common.transferToTargetStructure(creep, creep.room.storage);
                 return;
             }
@@ -186,7 +186,7 @@ export default class Transfer extends Singleton {
                 }
             }
         }
-        if(target instanceof StructureLab){
+        if (target instanceof StructureLab) {
             App.common.transferToTargetStructure(creep, target);
             if ((creep.store.energy && target.store.energy == 2000) ||
                 creep.store.getUsedCapacity() == 0) {
@@ -197,7 +197,7 @@ export default class Transfer extends Singleton {
             if (target.store[target.mineralType] == 3000 || creep.store.getUsedCapacity() == 0) {
                 App.fsm.changeState(creep, State.Withdraw);
             }
-        }else App.fsm.changeState(creep, State.TransferToStorage);
+        } else App.fsm.changeState(creep, State.TransferToStorage);
     }
 
     public ToPowerSpawn(creep: Creep) {
@@ -213,7 +213,7 @@ export default class Transfer extends Singleton {
         if (!target) {
             App.fsm.changeState(creep, State.TransferToLab);
             return
-        } 
+        }
         if (target.store.energy == 5000) {
             App.fsm.changeState(creep, State.TransferToLab);
             return;
@@ -237,17 +237,89 @@ export default class Transfer extends Singleton {
                     break;
                 }
             }
-            if (!target) return;
+            if (creep.ticksToLive <= 10) {
+                if (creep.store.getUsedCapacity() == 0) {
+                    creep.suicide();
+                    return;
+                } else if (creep.room.terminal) {
+                    App.common.transferToTargetStructure(creep, creep.room.storage);
+                    return;
+                } else {
+                    App.common.transferToTargetStructure(creep, target);
+                    return;
+                }
+            }
             if (creep.store.getUsedCapacity() == 0) {
                 App.fsm.changeState(creep, State.Withdraw);
                 return;
             }
-            if (!creep.store.energy) {
-                App.fsm.changeState(creep, State.TransferToStorage);
+            if (target) {
+                App.common.transferToTargetStructure(creep, target);
+            } else {
+                // 当controller附近有terminal时目标不存在转为向storage中转运能量
+                if (creep.room.terminal?.store.getFreeCapacity() <= 50000) {
+                    App.common.transferToTargetStructure(creep, creep.room.storage);
+                }
+                let transE2SFlag = Game.flags[`${creep.room.name}_transE2S`];
+                if (transE2SFlag) {
+                    App.common.transferToTargetStructure(creep, creep.room.storage);
+                }
+            }
+        }
+    }
+
+    /**
+     *   向核弹填充能量和G,判断当前房间是否需要填充能量或者G如果不需要则直接return,
+     * 先进行填充能量，能量填充完毕之后再填充G
+     * @param creep 
+     */
+    public ToNuker(creep: Creep) {
+        if (creep.room.controller.level < 8) return;
+        // 获取核弹发射器对象
+        let nuker = Game.getObjectById(creep.room.memory.nuker) as StructureNuker;
+        if (!nuker) {
+            App.fsm.changeState(creep, State.Withdraw);
+            return;
+        }
+
+        // 检查核弹发射器是否需要能量
+        if (nuker.store.energy < nuker.store.getCapacity(RESOURCE_ENERGY)) {
+            if (creep.store.getUsedCapacity() === 0) {
+                App.common.getResourceFromTargetStructure(creep, creep.room.storage, RESOURCE_ENERGY);
                 return;
             }
-            App.common.transferToTargetStructure(creep, target);
+            // 转移能量到核弹发射器
+            App.common.transferToTargetStructure(creep, nuker, RESOURCE_ENERGY);
+            return;
         }
+        // 检查核弹发射器是否需要Ghodium
+        let roomGhodiumCount = creep.room.storage.store[RESOURCE_GHODIUM] + creep.room.terminal.store[RESOURCE_GHODIUM] + creep.store.getUsedCapacity(RESOURCE_GHODIUM);
+        let needGhodiumQuantity = nuker.store.getCapacity(RESOURCE_GHODIUM) - nuker.store.getUsedCapacity(RESOURCE_GHODIUM);
+        if (nuker.store[RESOURCE_GHODIUM] < nuker.store.getCapacity(RESOURCE_GHODIUM) && roomGhodiumCount >= needGhodiumQuantity) {
+            if (!creep.store.getUsedCapacity(RESOURCE_GHODIUM) && creep.store.getFreeCapacity(RESOURCE_GHODIUM) == 0) {
+                App.common.transferToTargetStructure(creep, creep.room.storage);
+                return;
+            } else if (creep.store.getUsedCapacity(RESOURCE_GHODIUM) == 0) {
+                if (creep.room.storage.store[RESOURCE_GHODIUM] > 0) {
+                    App.common.getResourceFromTargetStructure(creep, creep.room.storage, RESOURCE_GHODIUM);
+                } else {
+                    App.common.getResourceFromTargetStructure(creep, creep.room.terminal, RESOURCE_GHODIUM);
+                }
+                return;
+            } else {
+                // 转移Ghodium到核弹
+                App.common.transferToTargetStructure(creep, nuker, RESOURCE_GHODIUM);
+                return;
+            }
+        } else {
+            if (global.allRes.G >= 10000) {
+                App.logistics.createTask(creep.room.name, RESOURCE_GHODIUM, 3000, 'nuker');
+            } else {
+                global.autoDeal(creep.room.name, "G", 1000, Math.min(2000, needGhodiumQuantity));
+            }
+        }
+        // 如果核弹发射器的能量和Ghodium都充足，转换creep到其他状态
+        App.fsm.changeState(creep, State.Withdraw);
     }
 
 

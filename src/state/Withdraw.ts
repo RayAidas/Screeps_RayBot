@@ -7,7 +7,6 @@ import Singleton from "@/Singleton";
 
 export default class Withdraw extends Singleton {
     public withdrawRuin(creep: Creep) {
-        if (!creep.room.memory.ruinEnergyState) return;
         let ruin = Game.getObjectById(creep.memory.ruinId);
         if (ruin && ruin.store.energy) {
             App.common.getResourceFromTargetStructure(creep, ruin);
@@ -142,6 +141,18 @@ export default class Withdraw extends Singleton {
                         }
                     }
                 }
+                // Lab0
+                let lab0 = Game.getObjectById(creep.room.memory.labs[0]);
+                if (lab0 && lab0.store.energy < 2000) {
+                    if (creep.store.energy) {
+                        App.common.transferToTargetStructure(creep, lab0, 'energy');
+                    } else if (creep.store.getUsedCapacity() > 0) {
+                        App.common.transferToTargetStructure(creep, storage);
+                    } else if (creep.store.getUsedCapacity() == 0) {
+                        App.common.getResourceFromTargetStructure(creep, storage, 'energy');
+                    }
+                    return;
+                }
                 creep.memory.test = 2;
                 // Lab
                 if (creep.room.memory.labs.clear) {
@@ -273,7 +284,7 @@ export default class Withdraw extends Singleton {
                         // App.fsm.changeState(creep, State.TransferToStorage);
                         if (storage.store.getFreeCapacity() < creep.store.getUsedCapacity()) {
                             App.fsm.changeState(creep, State.TransferToTerminal);
-                            return
+                            return;
                         }
                         if (App.common.getDis(creep.pos, storage.pos) == 1) {
                             let res = Object.keys(creep.store).sort((a, b) => creep.store[b] - creep.store[a]) as ResourceConstant[];
@@ -285,6 +296,15 @@ export default class Withdraw extends Singleton {
                         App.common.getResourceFromTargetStructure(creep, centerLink);
                     }
                     return;
+                }
+                creep.memory.test = 7.5;
+                if (creep.room.memory.nuker) {
+                    let nuker = Game.getObjectById(creep.room.memory.nuker);
+                    if (nuker.store[RESOURCE_GHODIUM] < nuker.store.getCapacity(RESOURCE_GHODIUM) ||
+                        nuker.store.energy < nuker.store.getCapacity(RESOURCE_ENERGY)) {
+                        App.fsm.changeState(creep, State.TransferToNuker);
+                        return;
+                    }
                 }
                 creep.memory.test = 8;
                 // factory
@@ -383,7 +403,28 @@ export default class Withdraw extends Singleton {
                 break;
             }
             case Role.Carrier: {
+                // TODO 代码待优化
                 let container = Game.getObjectById(creep.memory.targetContainer);
+                // let ruin = Game.getObjectById(creep.memory.ruinId);
+                if (creep.store.getFreeCapacity() == 0) {
+                    App.fsm.changeState(creep, State.TransferToSpawn);
+                    return;
+                }
+                // if (ruin && ruin.store.energy) {
+                //     App.common.getResourceFromTargetStructure(creep, ruin);
+                //     return;
+                // } else {
+                //     let ruin = creep.pos.findClosestByPath(FIND_RUINS, {
+                //         filter: r => r.store.energy
+                //     });
+                //     if (ruin) {
+                //         creep.memory.ruinId = ruin.id;
+                //         creep.memory.ruinState = true;
+                //     } else {
+                //         App.fsm.changeState(creep, State.Pick);
+                //         creep.memory.ruinState = false;
+                //     }
+                // }
                 if (creep.memory.targetContainer == creep.room.memory.mineral.container) {
                     if (creep.ticksToLive < 50) {
                         if (creep.store.getUsedCapacity() > 0) App.fsm.changeState(creep, State.TransferToStorage);
@@ -395,8 +436,7 @@ export default class Withdraw extends Singleton {
                     }
                     if (creep.store.getFreeCapacity() == 0) App.fsm.changeState(creep, State.TransferToStorage);
                     return;
-                }
-                else {
+                } else {
                     if (creep.store.getFreeCapacity() == 0) {
                         App.fsm.changeState(creep, State.TransferToSpawn);
                         return;
@@ -457,12 +497,12 @@ export default class Withdraw extends Singleton {
                     App.fsm.changeState(creep, State.Build);
                     return;
                 }
-                if (creep.room.memory.ruinEnergyState) {
-                    this.withdrawRuin(creep);
-                    return;
-                }
                 let upgradePlusFlag = Game.flags[`${creep.memory.roomFrom}_upgradePlus`];
                 if (!upgradePlusFlag) {
+                    if (creep.room.memory.ruinEnergyState) {
+                        this.withdrawRuin(creep);
+                        return;
+                    }
                     if (!creep.memory.constructionId) {
                         let controllerLink = Game.getObjectById(creep.room.memory.controllerLinkId);
                         if (controllerLink) {
@@ -473,11 +513,6 @@ export default class Withdraw extends Singleton {
                 }
                 // 如果是冲级模式则优先判断判断controllerLink有无能量，其次从controllerContainer等建筑中获取能量
                 if (upgradePlusFlag) {
-                    let controllerLink = Game.getObjectById(creep.room.memory.controllerLinkId);
-                    if (controllerLink && controllerLink.store[RESOURCE_ENERGY] >= 500) {
-                        this._moveToAndRetrieveEnergy(creep, controllerLink);
-                        return;
-                    }
                     let controllerContainers: Id<StructureContainer>[] = creep.room.memory.controllerContainerId;
                     let target: StructureContainer;
                     let storeTarget: StructureContainer;
@@ -495,10 +530,24 @@ export default class Withdraw extends Singleton {
                         if (creep.store.getUsedCapacity() == 0) {
                             creep.suicide();
                             return;
+                        } else if (creep.room.terminal) {
+                            App.common.transferToTargetStructure(creep, creep.room.terminal);
+                            return;
                         } else {
-                            App.fsm.changeState(creep, State.TransferToControllerContainer);
+                            App.common.transferToTargetStructure(creep, storeTarget);
                             return;
                         }
+                    }
+                    // TODO 冲级模式待优化，暂时个性化写一下
+                    if (terminal && terminal?.store.energy && terminal.room.name == 'E22S11') {
+                        App.common.getResourceFromTargetStructure(creep, terminal);
+                        if (creep.store.getFreeCapacity() == 0) App.fsm.changeState(creep, State.Upgrade);
+                        return;
+                    }
+                    let controllerLink = Game.getObjectById(creep.room.memory.controllerLinkId);
+                    if (controllerLink && controllerLink.store[RESOURCE_ENERGY] >= 500) {
+                        this._moveToAndRetrieveEnergy(creep, controllerLink);
+                        return;
                     }
                     if (target) {
                         this._moveToAndRetrieveEnergy(creep, target);
@@ -523,7 +572,7 @@ export default class Withdraw extends Singleton {
                     })
                     if (containers) {
                         let container = containers.sort((a, b) => b.store.energy - a.store.energy)[0];
-                        creep.memory.targetContainer = container.id;
+                        creep.memory.targetContainer = container?.id;
                     } else {
                         this.withdrawRuin(creep);
                         return;
@@ -564,7 +613,7 @@ export default class Withdraw extends Singleton {
                         creep.memory.ruinState = true;
                     }
                     else {
-                        App.fsm.changeState(creep, State.Pick);
+                        App.fsm.changeState(creep, State.Harvest);
                         creep.memory.ruinState = false;
                     }
                 }
@@ -608,13 +657,13 @@ export default class Withdraw extends Singleton {
                     this.withdrawRuin(creep);
                     return;
                 }
-                if (storage?.store.energy) {
-                    App.common.getResourceFromTargetStructure(creep, storage);
+                if (terminal?.store.energy) {
+                    App.common.getResourceFromTargetStructure(creep, terminal);
                     if (creep.store.getFreeCapacity() == 0) App.fsm.changeState(creep, State.TransferToControllerContainer);
                     return;
                 }
-                if (terminal?.store.energy) {
-                    App.common.getResourceFromTargetStructure(creep, terminal);
+                if (storage?.store.energy) {
+                    App.common.getResourceFromTargetStructure(creep, storage);
                     if (creep.store.getFreeCapacity() == 0) App.fsm.changeState(creep, State.TransferToControllerContainer);
                     return;
                 }

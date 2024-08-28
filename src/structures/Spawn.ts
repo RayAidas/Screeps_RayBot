@@ -77,6 +77,9 @@ export default class Spawn extends Singleton {
           }, {
             type: global.allRes["XKH2O"] > 1000 ? "XKH2O" : "KH",
             num: Game.creeps[creep.name].getActiveBodyparts(CARRY)
+          }, {
+            type: "ZO",
+            num: Game.creeps[creep.name].getActiveBodyparts(MOVE)
           }])
         }
         if (creep.memory.role == Role.Attacker) {
@@ -107,6 +110,7 @@ export default class Spawn extends Singleton {
               this._setBoostType(creep, global.allRes["GH2O"] > 1000 ? "GH2O" : "GH", WORK);
             } else {
               console.log(`XGH2O资源不足,自动购入`);
+              global.autoDeal(creep.room.name, "XGH2O", 1940, 2000);
             }
             // 强化CARRY部件
             if (upgradePlusFlag) {

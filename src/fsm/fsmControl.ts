@@ -56,9 +56,9 @@ export default class FsmControl extends FsmSystem {
   public Unboost(creep: Creep){
     App.unboost.run(creep);
   }
-  // public TransferToNuker(creep: Creep) {
-  //   App.transfer.ToNuker(creep);
-  // }
+  public TransferToNuker(creep: Creep) {
+    App.transfer.ToNuker(creep);
+  }
   public TransferToControllerContainer(creep: Creep) {
     App.transfer.ToControllerContainer(creep);
   }
