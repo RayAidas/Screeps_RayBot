@@ -315,7 +315,7 @@ export default class Transfer extends Singleton {
             if (global.allRes.G >= 10000) {
                 App.logistics.createTask(creep.room.name, RESOURCE_GHODIUM, 3000, 'nuker');
             } else {
-                global.autoDeal(creep.room.name, "G", 1000, 2000);
+                global.autoDeal(creep.room.name, "G", 1000, Math.min(2000, needGhodiumQuantity));
             }
         }
         // 如果核弹发射器的能量和Ghodium都充足，转换creep到其他状态
