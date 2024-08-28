@@ -174,8 +174,7 @@ export default class Terminal extends Singleton {
         let energyThreshold = 400000; // 定义的能量阈值
         if (highestPrice <= 10) {
             energyThreshold = 600000;
-            // TODO 待优化，根据storage容量来设定阈值，8M设置为6000000
-            if (roomName == 'W55S48') {
+            if (room.storage.store.getCapacity() == 8000000) {
                 energyThreshold = 6000000;
             }
         }
