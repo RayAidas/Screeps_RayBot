@@ -37,7 +37,6 @@ export default class Terminal extends Singleton {
                 }
             }
         }
-        // TODO 有BUG待修复，下单失败的情况也return了，导致后续的订单没有机会下单
         if (Game.time % (terminal.room.memory.index + 20) == 0) {
             if (global.allRes.XGH2O < 2000) {
                 global.autoDeal(terminal.room.name, "XGH2O", 1940, 2000);
