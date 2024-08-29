@@ -46,6 +46,34 @@ export default class Terminal extends Singleton {
                 global.autoDeal(terminal.room.name, 'power', 1200);
                 return;
             }
+            if (terminal.room.storage.store.O < 6000) {
+                global.autoDeal(terminal.room.name, 'O', 40);
+                return;
+            }
+            if (terminal.room.storage.store.H < 6000) {
+                global.autoDeal(terminal.room.name, 'H', 160);
+                return;
+            }
+            if (terminal.room.storage.store.Z < 6000) {
+                global.autoDeal(terminal.room.name, 'Z', 16);
+                return;
+            }
+            if (terminal.room.storage.store.L < 6000) {
+                global.autoDeal(terminal.room.name, 'L', 30);
+                return;
+            }
+            if (terminal.room.storage.store.U < 6000) {
+                global.autoDeal(terminal.room.name, 'U', 40);
+                return;
+            }
+            if (terminal.room.storage.store.K < 6000) {
+                global.autoDeal(terminal.room.name, 'K', 130);
+                return;
+            }
+            if (terminal.room.storage.store.X < 6000) {
+                global.autoDeal(terminal.room.name, 'X', 200);
+                return;
+            }
             if (global.allRes.XGH2O < 20000) {
                 global.autoDeal(terminal.room.name, "XGH2O", 1940, 2000)
             }
