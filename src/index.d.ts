@@ -323,6 +323,12 @@ interface RoomMemory {
 		creepName?: string,
 		num?: number,
 	}
+	observer?: {
+		id?: Id<StructureObserver>,
+		targets?: string[],
+		interval?: number,
+		index?: number
+	}
 	unboostContainer?: Id<StructureContainer>,
 	unboostContainerPos?: RoomPosition,
 	spawns?: string[],

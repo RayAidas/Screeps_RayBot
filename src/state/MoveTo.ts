@@ -32,12 +32,12 @@ export default class MoveTo extends Singleton {
             case Role.Claimer: {
                 let target = Game.flags[`${roomFrom}_claim`];
                 let atkClaim = Game.flags[`${roomFrom}_atkClaim`];
-                let transfer= Game.flags[`${roomFrom}_ts`];
-                if(transfer && !creep.memory.transferState){
+                let transfer = Game.flags[`${roomFrom}_ts`];
+                if (transfer && !creep.memory.transferState) {
                     if (creep.room.name != transfer.pos.roomName) {
                         creep.customMove(transfer.pos);
                         return
-                    }else{
+                    } else {
                         creep.memory.transferState = true;
                     }
                 }
@@ -86,12 +86,12 @@ export default class MoveTo extends Singleton {
             }
             case Role.HelpUpgrader:
             case Role.HelpBuilder: {
-                let transfer= Game.flags[`${roomFrom}_ts`];
-                if(transfer && !creep.memory.transferState){
+                let transfer = Game.flags[`${roomFrom}_ts`];
+                if (transfer && !creep.memory.transferState) {
                     if (creep.room.name != transfer.pos.roomName) {
                         creep.customMove(transfer.pos);
                         return
-                    }else{
+                    } else {
                         creep.memory.transferState = true;
                     }
                 }
@@ -150,6 +150,63 @@ export default class MoveTo extends Singleton {
                 }
                 break;
             }
+            case Role.DepositHarvester: {
+                let df = Game.flags[creep.name];
+                if (df) {
+                    if (creep.store.getFreeCapacity() == 0) {
+                        App.fsm.changeState(creep, State.Back);
+                        let d = creep.room.lookForAt(LOOK_DEPOSITS, df)[0]
+                        if (d.lastCooldown >= 100) {
+                            df.remove();
+                            return;
+                        }
+                        return;
+                    }
+                    if (creep.pos.roomName == df.pos.roomName) {
+                        let d = creep.room.lookForAt(LOOK_DEPOSITS, df)[0]
+                        if (d) {
+                            if (creep.harvest(d) == ERR_NOT_IN_RANGE) {
+                                // 检测是否有其他玩家爬
+                                // if (Math.max(Math.abs(creep.pos.x - d.pos.x), Math.abs(creep.pos.y - d.pos.y)) <= 2) {
+                                //   let hostile = creep.room.find(FIND_HOSTILE_CREEPS, {
+                                //     filter: c => Math.abs(c.pos.x - creep.pos.x) <= 2 && Math.abs(c.pos.y - creep.pos.y) <= 2 && !whiteList.includes(c.owner.username)
+                                //   })[0]
+                                //   if (hostile) {
+                                //     if (creep.attack(hostile) == ERR_NOT_IN_RANGE) {
+                                //       creep.customMove(d.pos);
+                                //       return;
+                                //     }
+                                //   } else 
+                                //   creep.customMove(d.pos);
+                                // } else 
+                                creep.customMove(d.pos);
+                            }
+                            // 记录单程抵达时间
+                            if (!creep.memory.time) {
+                                let pos1 = creep.pos;
+                                let pos2 = df.pos;
+                                if ((Math.abs(pos1.x - pos2.x) <= 1) && (Math.abs(pos1.y - pos2.y) <= 1)) {
+                                    creep.memory.time = 1500 - creep.ticksToLive;
+                                }
+                            }
+                            if (creep.store.getFreeCapacity() == 0 ||
+                                creep.ticksToLive < creep.memory.time + 50) {
+                                App.fsm.changeState(creep, State.Back);
+                                if (d.lastCooldown > 100) {
+                                    df.remove();
+                                    return;
+                                }
+                            }
+                        } else {
+                            df.remove();
+                            return;
+                        }
+                    } else {
+                        creep.customMove(df.pos);
+                    }
+                }
+                break;
+            }
         }
     }
 
@@ -163,6 +220,10 @@ export default class MoveTo extends Singleton {
                 }
                 if (creep.room.name == roomFrom) App.common.transferToTargetStructure(creep, Game.rooms[roomFrom].storage);
                 else creep.customMove(new RoomPosition(25, 25, roomFrom));
+                break;
+            }
+            case Role.DepositHarvester: {
+                App.fsm.changeState(creep, State.TransferToStorage);
                 break;
             }
         }

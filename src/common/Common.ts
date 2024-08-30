@@ -10,9 +10,8 @@ export default class Common extends Singleton {
         this.findFactory(roomName);
         this.findLabs(roomName);
         this.findPowerSpawn(roomName);
-        // App.common.findLinkByRoom(Game.rooms[rooms[i]]);
-        App.common.findNuker(roomName);
-        // App.common.findObserver(Game.rooms[rooms[i]]);
+        this.findNuker(roomName);
+        this.findObserver(roomName);
     }
     public getPosNear(pos: RoomPosition, sourceState: boolean = false) {
         for (let x = pos.x - 1; x <= pos.x + 1; x++) {
@@ -355,10 +354,27 @@ export default class Common extends Singleton {
         room.find(FIND_STRUCTURES, {
             filter: (structure) => {
                 if (structure.structureType == STRUCTURE_NUKER)
-                nuker = structure.id;
+                    nuker = structure.id;
             }
         })
         room.memory.nuker = nuker;
+    }
+
+    public findObserver(roomName: string) {
+        let room = Game.rooms[roomName];
+        if (!room.memory.observer) room.memory.observer = {
+            targets: [],
+            index: 0,
+        };
+        if (Game.getObjectById(room.memory.observer.id)) return;
+        let observerId: Id<StructureObserver> = null;
+        room.find(FIND_STRUCTURES, {
+            filter: (structure) => {
+                if (structure.structureType == STRUCTURE_OBSERVER)
+                    observerId = structure.id;
+            }
+        })
+        room.memory.observer.id = observerId;
     }
 
     public getSources(roomName: string) {

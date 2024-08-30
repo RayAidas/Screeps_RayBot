@@ -53,7 +53,7 @@ export default class FsmControl extends FsmSystem {
   public Boost(creep: Creep) {
     App.boost.run(creep);
   }
-  public Unboost(creep: Creep){
+  public Unboost(creep: Creep) {
     App.unboost.run(creep);
   }
   public TransferToNuker(creep: Creep) {
@@ -89,6 +89,8 @@ export default class FsmControl extends FsmSystem {
         break;
       case Role.Repairer: creep.memory.state = State.Withdraw;
         break;
+      case Role.DepositHarvester: creep.memory.state = State.MoveTo;
+        break;
 
       case Role.RemoteHarvester: creep.memory.state = State.MoveTo;
         break;
@@ -101,8 +103,6 @@ export default class FsmControl extends FsmSystem {
       case Role.RemoteAttackerT: creep.memory.state = State.MoveTo;
         break;
       case Role.Reserver: creep.memory.state = State.MoveTo;
-        break;
-      case Role.DepositHarvester: creep.memory.state = State.MoveTo;
         break;
       case Role.PB_Attacker: creep.memory.state = State.MoveTo;
         break;

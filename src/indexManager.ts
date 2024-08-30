@@ -25,7 +25,8 @@ export { default as Boost } from '@/state/Boost';
 export { default as Unoost } from '@/state/Unboost';
 export { default as PC } from '@/PC/PC';
 export { default as Solitary} from '@/fight/Solitary';
-// export { default as Observer } from './structures/Observer';
+export { default as Observer } from '@/structures/Observer';
+
 // export { default as Carry } from './state/Carry';
 // export { default as Attack } from './state/Attack';
 // export { default as Group } from './state/Group';

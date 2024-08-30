@@ -387,6 +387,7 @@ export default class Init extends Singleton {
       App.terminal.run(this.rooms[i]);
       App.spawn.update(this.rooms[i]);
       App.pc.run(this.rooms[i]);
+      App.observer.run(this.rooms[i]);
       // } catch (error) {
       //   console.log(this.rooms[i], error)
       // }

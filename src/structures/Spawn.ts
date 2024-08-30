@@ -88,6 +88,11 @@ export default class Spawn extends Singleton {
             num: Game.creeps[creep.name].getActiveBodyparts(ATTACK)
           }])
         }
+        // boost DepositHarvester
+        // if (creep.memory.role == Role.DepositHarvester) {
+
+        // }
+
         /**
          * 升级boost
          * WORK:

@@ -147,19 +147,33 @@ export default class Transfer extends Singleton {
                 if (creep.store.getUsedCapacity() == 0) App.fsm.changeState(creep, State.Unboost);
                 break;
             }
+            case Role.DepositHarvester: {
+                if (creep.ticksToLive < creep.memory.time * 2 + 50) creep.suicide();
+                else App.fsm.changeState(creep, State.MoveTo);
+                break
+            }
         }
     }
 
     public ToTerminal(creep: Creep) {
         let target = creep.room.terminal
         if (target?.my) {
-            if (target.store.getFreeCapacity() == 0) {
-                App.common.transferToTargetStructure(creep, creep.room.storage);
-                return;
+            switch (creep.memory.role) {
+                case Role.DepositHarvester: {
+                    if (creep.ticksToLive < creep.memory.time * 2 + 50) creep.suicide();
+                    else App.fsm.changeState(creep, State.MoveTo);
+                    break
+                }
+                default: {
+                    if (target.store.getFreeCapacity() == 0) {
+                        App.common.transferToTargetStructure(creep, creep.room.storage);
+                        return;
+                    }
+                    App.common.transferToTargetStructure(creep, target);
+                    if (creep.store.getUsedCapacity() == 0) App.fsm.changeState(creep, State.Withdraw);
+                    return;
+                }
             }
-            App.common.transferToTargetStructure(creep, target);
-            if (creep.store.getUsedCapacity() == 0) App.fsm.changeState(creep, State.Withdraw);
-            return;
         } else App.fsm.changeState(creep, State.TransferToStorage);
     }
 

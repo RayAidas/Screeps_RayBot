@@ -109,10 +109,9 @@ export default class App {
     return managers.Solitary.getInstance();
   }
 
-
-  // static get observer() {
-  //   return managers.Observer.getInstance();
-  // }
+  static get observer() {
+    return managers.Observer.getInstance();
+  }
 
   // static get carry() {
   //   return managers.Carry.getInstance();
