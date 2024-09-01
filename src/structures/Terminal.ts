@@ -27,7 +27,7 @@ export default class Terminal extends Singleton {
         }
 
         if (terminal.room.storage.store.energy > 500000 &&
-            terminal.store.energy >= 50000) {
+            terminal.store.energy >= 50000 && terminal.room.storage.store.getCapacity() <= 1000000) {
             for (let i = 0; i < Memory.myrooms.length; i++) {
                 let room = Game.rooms[Memory.myrooms[i]];
                 if (terminal.room.name == room.name && !room.terminal?.my) continue;
@@ -37,7 +37,6 @@ export default class Terminal extends Singleton {
                 }
             }
         }
-        // TODO 有BUG待修复，下单失败的情况也return了，导致后续的订单没有机会下单
         if (Game.time % (terminal.room.memory.index + 20) == 0) {
             if (global.allRes.XGH2O < 2000) {
                 global.autoDeal(terminal.room.name, "XGH2O", 1940, 2000);
@@ -45,6 +44,34 @@ export default class Terminal extends Singleton {
             if (terminal.room.controller.level < 8) return;
             if (terminal.room.storage.store.power < 10000) {
                 global.autoDeal(terminal.room.name, 'power', 1200);
+                return;
+            }
+            if (terminal.room.storage.store.O < 6000) {
+                global.autoDeal(terminal.room.name, 'O', 40, 6000);
+                return;
+            }
+            if (terminal.room.storage.store.H < 6000) {
+                global.autoDeal(terminal.room.name, 'H', 160, 6000);
+                return;
+            }
+            if (terminal.room.storage.store.Z < 6000) {
+                global.autoDeal(terminal.room.name, 'Z', 16, 6000);
+                return;
+            }
+            if (terminal.room.storage.store.L < 6000) {
+                global.autoDeal(terminal.room.name, 'L', 30, 6000);
+                return;
+            }
+            if (terminal.room.storage.store.U < 6000) {
+                global.autoDeal(terminal.room.name, 'U', 40, 6000);
+                return;
+            }
+            if (terminal.room.storage.store.K < 6000) {
+                global.autoDeal(terminal.room.name, 'K', 130, 6000);
+                return;
+            }
+            if (terminal.room.storage.store.X < 6000) {
+                global.autoDeal(terminal.room.name, 'X', 200, 6000);
                 return;
             }
             if (global.allRes.XGH2O < 20000) {
@@ -174,8 +201,7 @@ export default class Terminal extends Singleton {
         let energyThreshold = 400000; // 定义的能量阈值
         if (highestPrice <= 10) {
             energyThreshold = 600000;
-            // TODO 待优化，根据storage容量来设定阈值，8M设置为6000000
-            if (roomName == 'W55S48') {
+            if (room.storage.store.getCapacity() == 8000000) {
                 energyThreshold = 6000000;
             }
         }

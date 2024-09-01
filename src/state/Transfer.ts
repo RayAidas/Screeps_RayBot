@@ -292,24 +292,32 @@ export default class Transfer extends Singleton {
             App.common.transferToTargetStructure(creep, nuker, RESOURCE_ENERGY);
             return;
         }
-
         // 检查核弹发射器是否需要Ghodium
-        if (nuker.store[RESOURCE_GHODIUM] < nuker.store.getCapacity(RESOURCE_GHODIUM) && global.allRes.G >= 5000) {
-            if (!creep.store.getCapacity(RESOURCE_GHODIUM) && creep.store.getFreeCapacity(RESOURCE_GHODIUM) == 0) {
+        let roomGhodiumCount = creep.room.storage.store[RESOURCE_GHODIUM] + creep.room.terminal.store[RESOURCE_GHODIUM] + creep.store.getUsedCapacity(RESOURCE_GHODIUM);
+        let needGhodiumQuantity = nuker.store.getCapacity(RESOURCE_GHODIUM) - nuker.store.getUsedCapacity(RESOURCE_GHODIUM);
+        if (nuker.store[RESOURCE_GHODIUM] < nuker.store.getCapacity(RESOURCE_GHODIUM) && roomGhodiumCount >= needGhodiumQuantity) {
+            if (!creep.store.getUsedCapacity(RESOURCE_GHODIUM) && creep.store.getFreeCapacity(RESOURCE_GHODIUM) == 0) {
                 App.common.transferToTargetStructure(creep, creep.room.storage);
                 return;
             } else if (creep.store.getUsedCapacity(RESOURCE_GHODIUM) == 0) {
-                App.common.getResourceFromTargetStructure(creep, creep.room.storage, RESOURCE_GHODIUM);
+                if (creep.room.storage.store[RESOURCE_GHODIUM] > 0) {
+                    App.common.getResourceFromTargetStructure(creep, creep.room.storage, RESOURCE_GHODIUM);
+                } else {
+                    App.common.getResourceFromTargetStructure(creep, creep.room.terminal, RESOURCE_GHODIUM);
+                }
                 return;
             } else {
                 // 转移Ghodium到核弹
-                App.common.transferToTargetStructure(creep, nuker);
+                App.common.transferToTargetStructure(creep, nuker, RESOURCE_GHODIUM);
                 return;
             }
         } else {
-            global.autoDeal(creep.room.name, "G", 500, 2000)
+            if (global.allRes.G >= 10000) {
+                App.logistics.createTask(creep.room.name, RESOURCE_GHODIUM, 3000, 'nuker');
+            } else {
+                global.autoDeal(creep.room.name, "G", 1000, Math.min(2000, needGhodiumQuantity));
+            }
         }
-
         // 如果核弹发射器的能量和Ghodium都充足，转换creep到其他状态
         App.fsm.changeState(creep, State.Withdraw);
     }
