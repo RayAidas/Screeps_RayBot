@@ -13,7 +13,7 @@ export default class PC extends Singleton {
         operate_power: 'operate_power',
         clearStore: 'clearStore'
     }
-    // TODO 修改为一个PC可以给多个房间扩容storage，增加提高powerSpawn效率功能
+    
     public static addPCTask(roomName: string, taskName: string, opsNum: number = 0, targetId?: string) {
         let powerCreep = Game.powerCreeps[Memory.pcConfig[roomName]];
         if (powerCreep?.ticksToLive) {
