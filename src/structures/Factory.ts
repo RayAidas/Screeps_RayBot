@@ -10,7 +10,7 @@ interface Detail {
 
 export default class Factory extends Singleton {
     private ConstantNum = {
-        default: 20000,
+        default: 40000,
         battery: 20000,
         switch: 100,
         phlegm: 100,

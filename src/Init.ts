@@ -41,14 +41,14 @@ export default class Init extends Singleton {
           global.et[Game.rooms[this.rooms[i]].name] = true;
         }
       }
-      if (Game.shard.name !== "shard3") {
-        if (Memory.RoomSitesState[this.rooms[i]]) {
-          if (Game.time % ((1 + Memory.rooms[this.rooms[i]].index) * (1000 + Memory.rooms[this.rooms[i]].index)) == 0) {
-            Memory.RoomSitesState[this.rooms[i]] = {};
-            console.log('检查建筑', this.rooms[i]);
-          }
+      // if (Game.shard.name !== "shard3") {
+      if (Memory.RoomSitesState[this.rooms[i]]) {
+        if (Game.time % ((1 + Memory.rooms[this.rooms[i]].index) * (1000 + Memory.rooms[this.rooms[i]].index)) == 0) {
+          Memory.RoomSitesState[this.rooms[i]] = {};
+          console.log('检查建筑', this.rooms[i]);
         }
       }
+      // }
     }
     this._runCreeps();
     let used = Game.cpu.getUsed();

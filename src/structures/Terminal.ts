@@ -43,7 +43,7 @@ export default class Terminal extends Singleton {
             if (terminal.room.controller.level < 8) return;
             let type: MineralConstant = room.memory.mineral.type;
             if (global.allRes[type] < 4000 * Memory.myrooms.length) {
-                global.autoDeal(terminal.room.name, type, 80);
+                global.autoDeal(terminal.room.name, type, 200);
                 return;
             }
             if (terminal.store.power < 1000) {
@@ -59,7 +59,7 @@ export default class Terminal extends Singleton {
                 if (terminal.room.name == task.roomName) continue;
                 if (global.demand[`${roomName}-${task.res}`]) continue;
                 if (task.type == 'lab' || task.type == 'power') {
-                    if ((terminal.store[task.res] + terminal.room.storage?.store[task.res] ?? 0) >= task.num * 2) {
+                    if ((terminal.store[task.res] + terminal.room.storage?.store[task.res] || 0) >= task.num * 2) {
                         if (terminal.store[task.res] >= task.num) {
                             task.taskRoom = roomName;
                             global.send(terminal.room.name, task.roomName, task.res, task.num);
@@ -68,7 +68,7 @@ export default class Terminal extends Singleton {
                     }
                 }
                 if (task.type == 'factory') {
-                    if ((terminal.store[task.res] + terminal.room.storage?.store[task.res] ?? 0) > task.num) {
+                    if ((terminal.store[task.res] + terminal.room.storage?.store[task.res] || 0) > task.num) {
                         if (terminal.store[task.res] > task.num) {
                             task.taskRoom = roomName;
                             global.send(terminal.room.name, task.roomName, task.res, task.num);
