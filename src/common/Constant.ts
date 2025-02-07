@@ -1,5 +1,9 @@
 import { calcBodyPart } from "./utils";
 
+// export const PUBLIC_SEGMENTS = [1];
+export const MoSaSa = "MoSaSa";
+export const MoSaSa_PUBLIC_SEGMENTS_ID = 3;
+
 export const Role = {
   Harvester: 'harvester',
   Carrier: 'carrier',

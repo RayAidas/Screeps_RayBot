@@ -1,4 +1,4 @@
-import * as managers from './indexManager';
+import * as managers from "./indexManager";
 
 export default class App {
   static get init() {
@@ -109,6 +109,9 @@ export default class App {
     return managers.Solitary.getInstance();
   }
 
+  static get foreignSegment() {
+    return managers.ForeignSegment.getInstance();
+  }
 
   // static get observer() {
   //   return managers.Observer.getInstance();
@@ -117,7 +120,6 @@ export default class App {
   // static get carry() {
   //   return managers.Carry.getInstance();
   // }
-
 
   // static get repair() {
   //   return managers.Repair.getInstance();
@@ -133,9 +135,5 @@ export default class App {
 
   // static get groupF() {
   //   return managers.GroupF.getInstance();
-  // }
-
-  // static get foreignSegment() {
-  //   return managers.ForeignSegment.getInstance();
   // }
 }

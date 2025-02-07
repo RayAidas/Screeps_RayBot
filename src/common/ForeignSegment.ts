@@ -1,4 +1,5 @@
 import Singleton from "@/Singleton";
+import { MoSaSa, MoSaSa_PUBLIC_SEGMENTS_ID } from "./Constant";
 
 interface Data {
 	resource: ResourceConstant,
@@ -20,14 +21,28 @@ export default class ForeignSegment extends Singleton {
 
 	public getForeignSegment(): null | Data {
 		if (RawMemory.foreignSegment.data) {
-			return JSON.parse(RawMemory.foreignSegment.data) as Data
+			let data: Data;
+			try {
+				data = JSON.parse(RawMemory.foreignSegment.data) as Data;
+			} catch (error) {
+				data = null;
+				console.log("data error")
+			}
+			return data;
 		}
-		else return null
 	}
 
 	public setSegmentPublic(index: number) {
 		if (RawMemory.segments[index]?.length) {
 			RawMemory.setPublicSegments([index]);
+		}
+	}
+
+	public update() {
+		RawMemory.setActiveForeignSegment(MoSaSa, MoSaSa_PUBLIC_SEGMENTS_ID);
+		let data = this.getForeignSegment();
+		if (data) {
+			global.sendTask(data.roomName, data.resource, data.num);
 		}
 	}
 }
