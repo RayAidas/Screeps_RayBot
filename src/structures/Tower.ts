@@ -53,6 +53,7 @@ export default class Tower extends Singleton {
     let whiteList = Memory.whiteList || [];
     //  App.group.checkDefenseGroup(roomName);
     global.towerTask[roomName].structures = [];
+    global.towerTask[roomName].enemys = [];
 
     // if (Game.rooms[roomName].memory.nuckerState) {
     //   let nukes = Game.rooms[roomName].find(FIND_NUKES, {
