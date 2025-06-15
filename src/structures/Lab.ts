@@ -100,6 +100,7 @@ export default class Lab extends Singleton {
         if (arr.length) {
             let index = Math.floor(room.memory.index / 2);
             if (!arr[index]) index = 0;
+            if (global.allRes[arr[index].res] >= 300000) return;
             this.getMineralCompoundConstant(roomName, arr[index].res);
             room.memory.labs.fillState = true;
         }
@@ -157,7 +158,7 @@ export default class Lab extends Singleton {
             room.memory.labs.fillRes = null;
             room.memory.labs.fillTargetIndex = null;
         }
-        if(!Memory.isNoLabCD) if (Game.time % (room.memory.index * 2 + 30) != 0) return;
+        if (!Memory.isNoLabCD) if (Game.time % (room.memory.index * 2 + 30) != 0) return;
         let lab0 = Game.getObjectById(room.memory.labs[0]);
         this.reaction(lab1, lab2, lab0, roomName);
         for (let i = 3; i < room.memory.labs.num; i++) {
